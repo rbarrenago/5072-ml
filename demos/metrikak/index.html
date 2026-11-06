@@ -24,6 +24,7 @@ button{cursor:pointer;font-weight:800}button.active{background:#eaf3ff;border-co
 </head>
 <body>
 <div class="wrap">
+<div style="margin-bottom:10px"><a href="../../" style="color:#1e73d8;text-decoration:none;font-weight:800">← 5072 ML Lab</a></div>
 <div class="eyebrow">5072 · UD4 · Erregresio-metrikak</div>
 <h1>MAE · RMSE · R²</h1>
 <p class="subtitle">Metrika bakoitzak galdera desberdin bati erantzuten dio. Aldatu erroreen forma eta ikusi nola erreakzionatzen duten hirurek.</p>
@@ -47,7 +48,7 @@ button{cursor:pointer;font-weight:800}button.active{background:#eaf3ff;border-co
     <span><i class="key" style="background:#b8860b"></i>Baseline: ȳ</span>
   </div>
   <div class="range">
-    <strong>Errore berezia:</strong> mugitu slider-a eta egin errore bakar bat handiagoa.
+    <strong>Errore berezia:</strong> mugitu graduatzailea eta egin errore bakar bat handiagoa.
     <input id="outlier" type="range" min="-8" max="8" step="0.1" value="0">
     <div>Desplazamendua: <strong id="outlierVal">0.0</strong></div>
   </div>
@@ -56,14 +57,15 @@ button{cursor:pointer;font-weight:800}button.active{background:#eaf3ff;border-co
 <aside class="kpis">
   <div class="kpi"><small>MAE · Batez besteko errore absolutua</small><strong id="mae">–</strong><p>“Batez beste zenbat huts egiten dugu?” Errore guztiak linealki zenbatzen ditu.</p><div class="formula">MAE = mean(|y − ŷ|)</div></div>
   <div class="kpi"><small>RMSE · Errore handiak gehiago zigortu</small><strong id="rmse">–</strong><p>Karratuagatik, errore handi batek eragin handiagoa du.</p><div class="formula">RMSE = √mean((y − ŷ)²)</div></div>
-  <div class="kpi"><small>R² · Baseline-arekiko hobekuntza</small><strong id="r2">–</strong><p>1 = perfektua · 0 = TRAIN batezbestekoa bezain ona · &lt;0 = baseline baino okerragoa.</p><div class="formula">R² = 1 − SSE / SST</div></div>
+  <div class="kpi"><small>R² · Baseline-arekiko hobekuntza</small><strong id="r2">–</strong><p>1 = perfektua · 0 = y-ren batezbesteko konstantea bezain ona · &lt;0 = baseline hori baino okerragoa.</p><div class="formula">R² = 1 − SSE / SST</div></div>
+  <div class="kpi"><small>RMSE − MAE · outlier seinalea</small><strong id="gap">–</strong><p>Aldea handitzen bada, errore handiek pisu handiagoa hartzen ari direla adierazten du. Ez da outlier-detektagailu formal bat.</p></div>
 </aside>
 </div>
 
 <section class="explain">
-  <div class="card"><h3>MAE</h3><p>Interpretatzeko errazena. Target-aren unitate berean dago. 5 M€-ko MAE = batez beste 5 M€ inguruko errore absolutua.</p></div>
-  <div class="card"><h3>RMSE</h3><p>Errore handi bat agertzen denean MAE baino gehiago igotzen da. Horregatik erabilgarria da errore handiak bereziki garestiak direnean.</p></div>
-  <div class="card"><h3>R²</h3><p>Ez du errorea unitate errealetan ematen. Modeloa “denei batezbestekoa esan” baseline-arekin alderatzen du.</p></div>
+  <div class="card"><h3>MAE</h3><p>Interpretatzeko errazena. Helburu-aldagaiaren unitate berean dago. 5 M€-ko MAE = batez beste 5 M€ inguruko errore absolutua.</p></div>
+  <div class="card"><h3>RMSE</h3><p>Errore handi bat agertzen denean MAE baino gehiago igotzen da. Beti betetzen da RMSE ≥ MAE. Horregatik erabilgarria da errore handiak bereziki garestiak direnean.</p></div>
+  <div class="card"><h3>R²</h3><p>Ez du errorea unitate errealetan ematen. Modeloa “denei y-ren batezbestekoa esan” baseline konstantearekin alderatzen du.</p></div>
 </section>
 </div>
 
@@ -71,7 +73,7 @@ button{cursor:pointer;font-weight:800}button.active{background:#eaf3ff;border-co
 (() => {
  const svg=document.getElementById('plot'), NS='http://www.w3.org/2000/svg';
  const preset=document.getElementById('preset'), slider=document.getElementById('outlier'), oval=document.getElementById('outlierVal');
- const out={mae:document.getElementById('mae'),rmse:document.getElementById('rmse'),r2:document.getElementById('r2')};
+ const out={mae:document.getElementById('mae'),rmse:document.getElementById('rmse'),r2:document.getElementById('r2'),gap:document.getElementById('gap')};
  const box={l:62,t:28,r:850,b:455}, yr=[0,20];
  const sx=i=>box.l+i/(7)*(box.r-box.l), sy=y=>box.b-(y-yr[0])/(yr[1]-yr[0])*(box.b-box.t);
  const truth=[4,6,8,10,12,13,15,17];
@@ -105,7 +107,7 @@ button{cursor:pointer;font-weight:800}button.active{background:#eaf3ff;border-co
      const tx=node('text',{x:x,y:box.b+25,'text-anchor':'middle',fill:'#6b7b8d','font-size':12});tx.textContent=String(i+1);svg.appendChild(tx);
    }
    const lab=node('text',{x:(box.l+box.r)/2,y:500,'text-anchor':'middle',fill:'#2a3d55','font-weight':700});lab.textContent='TEST kasuak';svg.appendChild(lab);
-   out.mae.textContent=st.mae.toFixed(2);out.rmse.textContent=st.rmse.toFixed(2);out.r2.textContent=st.r2.toFixed(2);
+   out.mae.textContent=st.mae.toFixed(2);out.rmse.textContent=st.rmse.toFixed(2);out.r2.textContent=st.r2.toFixed(2);out.gap.textContent=(st.rmse-st.mae).toFixed(2);
  }
  function load(){pred=base(preset.value);slider.value=0;oval.textContent='0.0';render()}
  preset.addEventListener('change',load);

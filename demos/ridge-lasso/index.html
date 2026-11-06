@@ -19,9 +19,10 @@ svg{display:block;width:100%;height:auto}.controls{display:flex;gap:8px;flex-wra
 </head>
 <body>
 <div class="wrap">
+<div style="margin-bottom:10px"><a href="../../" style="color:#1e73d8;text-decoration:none;font-weight:800">← 5072 ML Lab</a></div>
 <div class="eyebrow">5072 · UD4 · Erregularizazioa</div>
 <h1>Ridge vs Lasso</h1>
-<p class="subtitle">Bi metodoek koefiziente handiak zigortzen dituzte, baina ez modu berean: <strong>Ridge-k txikitu</strong> egiten ditu; <strong>Lasso-k batzuk 0ra</strong> eraman ditzake.</p>
+<p class="subtitle">Bi metodoek koefiziente handiak zigortzen dituzte, baina ez modu berean: <strong>Ridge-k txikitu</strong> egiten ditu; <strong>Lasso-k batzuk 0ra</strong> eraman ditzake. Demo honetan x₁ eta x₂ <strong>estandarizatuta</strong> daude, zigorra ezaugarri guztiei eskala konparagarrian aplikatzeko.</p>
 
 <div class="grid">
 <section class="card">
@@ -31,9 +32,9 @@ svg{display:block;width:100%;height:auto}.controls{display:flex;gap:8px;flex-wra
     </label>
   </div>
   <div class="alpha">
-    <label><strong>α penalty:</strong> <span id="alphaVal">0.50</span></label>
+    <label><strong>α zigorra:</strong> <span id="alphaVal">0.50</span></label>
     <input id="alpha" type="range" min="0" max="3" value=".5" step=".02">
-    <div style="color:#66758a;font-size:13px;margin-top:5px">α handiagoa → penalty handiagoa → koefiziente txikiagoak.</div>
+    <div style="color:#66758a;font-size:13px;margin-top:5px">α handiagoa → zigor handiagoa → koefiziente txikiagoak.</div>
   </div>
   <svg id="bars" viewBox="0 0 820 480" aria-label="OLS, Ridge eta Lasso koefizienteen konparaketa"></svg>
 </section>
@@ -42,7 +43,7 @@ svg{display:block;width:100%;height:auto}.controls{display:flex;gap:8px;flex-wra
   <section class="card">
     <h3 style="margin-top:0">Uneko koefizienteak</h3>
     <table class="compare">
-      <thead><tr><th>Modeloa</th><th>w₁</th><th>w₂</th><th>MSE</th></tr></thead>
+      <thead><tr><th>Modeloa</th><th>w₁</th><th>w₂</th><th>TRAIN MSE</th></tr></thead>
       <tbody>
         <tr><td>OLS</td><td id="o1">–</td><td id="o2">–</td><td id="om">–</td></tr>
         <tr><td>Ridge</td><td id="r1">–</td><td id="r2">–</td><td id="rm">–</td></tr>
@@ -55,14 +56,14 @@ svg{display:block;width:100%;height:auto}.controls{display:flex;gap:8px;flex-wra
       <div class="metric"><small>corr(x₁,x₂)</small><strong id="corr">–</strong></div>
       <div class="metric"><small>Lasso zero kop.</small><strong id="zeros">–</strong></div>
     </div>
-    <p style="color:#66758a;font-size:14px;line-height:1.45"><strong>Kontuz:</strong> zero izatea ez da “feature hau beti alferrikakoa da” esatea. Datasetaren, korrelazioaren eta α-ren araberakoa da.</p>
+    <p style="color:#66758a;font-size:14px;line-height:1.45"><strong>Kontuz:</strong> zero izatea ez da “ezaugarri hau beti alferrikakoa da” esatea. Datasetaren, korrelazioaren eta α-ren araberakoa da.</p><p style="color:#66758a;font-size:14px;line-height:1.45"><strong>Beste ideia garrantzitsu bat:</strong> OLS-k normalean TRAIN MSE txikiena izango du. Erregularizazioaren helburua ez da TRAIN errorea jaistea, koefizienteak kontrolatuz generalizazioa hobetzea baizik.</p>
   </section>
 </aside>
 </div>
 
 <section class="notes">
-<div class="card"><h3>Ridge · L2</h3><p>Penalty karratua erabiltzen du. Informazioa banatu ohi du feature korrelazionatuen artean eta koefizienteak txikiago bihurtzen ditu, normalean 0 zehatza lortu gabe.</p></div>
-<div class="card"><h3>Lasso · L1</h3><p>Penalty absolutua erabiltzen du. Soluzio “sparse”-ak sustatzen ditu: koefiziente batzuk zehazki 0 izan daitezke, feature-selection efektuarekin.</p></div>
+<div class="card"><h3>Ridge · L2</h3><p><strong>MSE + αΣw²</strong>. Informazioa banatu ohi du ezaugarri korrelazionatuen artean eta koefizienteak txikiago bihurtzen ditu, normalean 0 zehatza lortu gabe.</p></div>
+<div class="card"><h3>Lasso · L1</h3><p><strong>MSE + αΣ|w|</strong>. Soluzio “sparse”-ak sustatzen ditu: koefiziente batzuk zehazki 0 izan daitezke, ezaugarri-hautaketaren efektuarekin.</p></div>
 </section>
 </div>
 
@@ -74,7 +75,7 @@ svg{display:block;width:100%;height:auto}.controls{display:flex;gap:8px;flex-wra
  let X=[],y=[];
  function data(kind){
    X=[];y=[];let seed=17;const rand=()=>{seed=(seed*9301+49297)%233280;return seed/233280};const gauss=()=>{const u=Math.max(rand(),1e-6),v=Math.max(rand(),1e-6);return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)};
-   for(let i=0;i<80;i++){const x1=gauss();const x2=kind==='corr'?0.94*x1+0.34*gauss():0.25*x1+0.97*gauss();const yy=4*x1+0.35*x2+1.1*gauss();X.push([x1,x2]);y.push(yy)}
+   for(let i=0;i<80;i++){const x1=gauss();const x2=kind==='corr'?0.94*x1+0.34*gauss():0.25*x1+0.97*gauss();const yy=4*x1+1.0*x2+1.1*gauss();X.push([x1,x2]);y.push(yy)}
    standardize();
  }
  function standardize(){
@@ -87,7 +88,7 @@ svg{display:block;width:100%;height:auto}.controls{display:flex;gap:8px;flex-wra
  function solve2(A,v){const [a,b,c,d]=A,det=a*d-b*c;return [(d*v[0]-b*v[1])/det,(-c*v[0]+a*v[1])/det]}
  function ridge(a){const C=cov(),v=xty();return solve2([C[0]+a,C[1],C[2],C[3]+a],v)}
  const soft=(z,g)=>Math.sign(z)*Math.max(Math.abs(z)-g,0);
- function lasso(a){let b=[0,0];for(let it=0;it<120;it++){for(let j=0;j<2;j++){let rho=0,den=0;for(let i=0;i<X.length;i++){let partial=y[i];for(let k=0;k<2;k++)if(k!==j)partial-=X[i][k]*b[k];rho+=X[i][j]*partial;den+=X[i][j]*X[i][j]}rho/=X.length;den/=X.length;b[j]=soft(rho,a)/den}}return b}
+ function lasso(a){let b=[0,0];for(let it=0;it<120;it++){for(let j=0;j<2;j++){let rho=0,den=0;for(let i=0;i<X.length;i++){let partial=y[i];for(let k=0;k<2;k++)if(k!==j)partial-=X[i][k]*b[k];rho+=X[i][j]*partial;den+=X[i][j]*X[i][j]}rho/=X.length;den/=X.length;b[j]=soft(rho,a/2)/den}}return b}
  function mse(b){return y.reduce((s,yy,i)=>s+(yy-dot(X[i],b))**2,0)/y.length}
  function corr(){const a=X.map(r=>r[0]),b=X.map(r=>r[1]);return a.reduce((s,v,i)=>s+v*b[i],0)/a.length}
  function node(tag,a={}){const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(a))e.setAttribute(k,v);return e}
@@ -100,7 +101,7 @@ svg{display:block;width:100%;height:auto}.controls{display:flex;gap:8px;flex-wra
    models.forEach((m,mi)=>{[-1,1].forEach((off,j)=>{const v=m[1][j],x=centers[mi]+off*35,y0=sy(0),yv=sy(v),h=Math.abs(y0-yv);svg.appendChild(node('rect',{x:x-24,y:Math.min(y0,yv),width:48,height:h,rx:5,fill:m[2]}));const lab=node('text',{x,y:box.b+25,'text-anchor':'middle',fill:'#526479','font-size':12});lab.textContent='w'+(j+1);svg.appendChild(lab)});const title=node('text',{x:centers[mi],y:462,'text-anchor':'middle',fill:'#20364e','font-weight':800});title.textContent=m[0];svg.appendChild(title)})
  }
  function render(){
-   const a=Number(alpha.value),o=ridge(0.000001),r=ridge(a),l=lasso(a);draw({o,r,l});aval.textContent=a.toFixed(2);
+   const a=Number(alpha.value),o=ridge(0),r=ridge(a),l=lasso(a);draw({o,r,l});aval.textContent=a.toFixed(2);
    el.o1.textContent=o[0].toFixed(2);el.o2.textContent=o[1].toFixed(2);el.om.textContent=mse(o).toFixed(2);
    el.r1.textContent=r[0].toFixed(2);el.r2.textContent=r[1].toFixed(2);el.rm.textContent=mse(r).toFixed(2);
    el.l1.textContent=l[0].toFixed(2);el.l2.textContent=l[1].toFixed(2);el.lm.textContent=mse(l).toFixed(2);

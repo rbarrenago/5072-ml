@@ -21,6 +21,7 @@ button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}button
 </head>
 <body>
 <div class="wrap">
+<div style="margin-bottom:10px"><a href="../../" style="color:#1e73d8;text-decoration:none;font-weight:800">← 5072 ML Lab</a></div>
 <div class="eyebrow">5072 · UD4 · Gradient Descent</div>
 <h1>Aizkorritik haranera</h1>
 <p class="subtitle">Modeloa ez da “bat-batean” zuzena aurkitzen. <strong>Predikzioa → MSE → gradientea → update</strong> zikloa errepikatzen du. Egin urratsak eskuz edo automatikoki.</p>
@@ -40,7 +41,7 @@ button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}button
     <div class="stat"><small>b</small><strong id="b">0</strong></div>
     <div class="stat"><small>MSE</small><strong id="mse">–</strong></div>
   </div>
-  <div class="lr"><label><strong>Learning rate η:</strong> <span id="lrVal">0.08</span></label><input id="lr" type="range" min="0.005" max="0.30" step="0.005" value="0.08"><p class="note" style="margin-bottom:0">Txikiegia → motela. Handiegia → minimoa gainditu, oszilatu edo dibergitu.</p></div>
+  <div class="lr"><label><strong>Learning rate η:</strong> <span id="lrVal">0.015</span></label><input id="lr" type="range" min="0.001" max="0.060" step="0.001" value="0.015"><p class="note" style="margin-bottom:6px">Txikiegia → motela. Handiegia → minimoa gainditu, oszilatu edo dibergitu.</p><div id="lrStatus" style="font-weight:900"></div></div>
 </section>
 
 <aside class="side">
@@ -51,7 +52,7 @@ button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}button
   </section>
   <section class="card">
     <h3 style="margin-top:0">Motorra</h3>
-    <div class="flow">forward → loss → gradients → update</div>
+    <div class="flow">forward → loss → gradients → update</div><div style="margin-top:10px;text-align:center;font-family:Georgia,serif;font-size:18px">w ← w − η · ∂MSE/∂w &nbsp;&nbsp; | &nbsp;&nbsp; b ← b − η · ∂MSE/∂b</div><p class="note"><strong>Marra eten berdea</strong> OLS-k zuzenean emango lukeen helburua da. Marra urdina Gradient Descent-ek pausoz pauso ikasten ari den eredua da.</p>
     <p class="note">Erregresio linealean MSE gainazala ganbila da. Beraz, learning rate egokia erabiliz, minimo globalera hurbiltzen gara.</p>
   </section>
 </aside>
@@ -61,11 +62,12 @@ button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}button
 <script>
 (() => {
  const NS='http://www.w3.org/2000/svg', fit=document.getElementById('fitPlot'), surf=document.getElementById('surface');
- const els={epoch:document.getElementById('epoch'),w:document.getElementById('w'),b:document.getElementById('b'),mse:document.getElementById('mse'),lr:document.getElementById('lr'),lrVal:document.getElementById('lrVal')};
+ const els={epoch:document.getElementById('epoch'),w:document.getElementById('w'),b:document.getElementById('b'),mse:document.getElementById('mse'),lr:document.getElementById('lr'),lrVal:document.getElementById('lrVal'),lrStatus:document.getElementById('lrStatus')};
  const xs=[.5,1.2,2,2.8,3.6,4.5,5.5,6.2,7,8,8.8,9.5];
  const ys=[2.1,2.9,3.4,4.4,4.7,5.9,6.7,7.2,7.8,8.7,9.2,9.6];
- let w=0,b=0,epoch=0,path=[],timer=null;
  const mean=a=>a.reduce((s,v)=>s+v,0)/a.length;
+ const mx=mean(xs), my=mean(ys); const olsW=xs.reduce((s,x,i)=>s+(x-mx)*(ys[i]-my),0)/xs.reduce((s,x)=>s+(x-mx)**2,0); const olsB=my-olsW*mx;
+ let w=0,b=0,epoch=0,path=[],timer=null;
  function mse(ww,bb){return mean(xs.map((x,i)=>(ys[i]-(ww*x+bb))**2))}
  function grads(){const n=xs.length;let dw=0,db=0;for(let i=0;i<n;i++){const e=(w*xs[i]+b)-ys[i];dw+=e*xs[i];db+=e}return {dw:2*dw/n,db:2*db/n}}
  function step(){const g=grads(),lr=Number(els.lr.value);w-=lr*g.dw;b-=lr*g.db;epoch++;path.push({w,b});render()}
@@ -76,6 +78,7 @@ button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}button
   const box={l:60,t:28,r:830,b:420},sx=x=>box.l+x/10*(box.r-box.l),sy=y=>box.b-y/12*(box.b-box.t);
   for(let i=0;i<=10;i+=2){fit.appendChild(n('line',{x1:sx(i),y1:box.t,x2:sx(i),y2:box.b,stroke:'#e8edf3'}));fit.appendChild(n('line',{x1:box.l,y1:sy(i),x2:box.r,y2:sy(i),stroke:'#e8edf3'}))}
   xs.forEach((x,i)=>fit.appendChild(n('circle',{cx:sx(x),cy:sy(ys[i]),r:7,fill:'#1e73d8'})));
+  fit.appendChild(n('line',{x1:sx(0),y1:sy(olsB),x2:sx(10),y2:sy(olsW*10+olsB),stroke:'#1e9b63','stroke-width':3,'stroke-dasharray':'8 6','stroke-linecap':'round'}));
   fit.appendChild(n('line',{x1:sx(0),y1:sy(b),x2:sx(10),y2:sy(w*10+b),stroke:'#123b67','stroke-width':4,'stroke-linecap':'round'}));
  }
  function drawSurface(){
@@ -87,11 +90,12 @@ button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}button
   for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const t=(vals[j][i]-min)/(max-min),light=94-46*Math.sqrt(t);surf.appendChild(n('rect',{x:box.l+i*cw,y:box.b-(j+1)*ch,width:cw+1,height:ch+1,fill:`hsl(210 65% ${light}%)`,stroke:'none'}))}
   const sx=ww=>box.l+(ww-wr[0])/(wr[1]-wr[0])*(box.r-box.l),sy=bb=>box.b-(bb-br[0])/(br[1]-br[0])*(box.b-box.t);
   if(path.length>1){let d=path.map((p,i)=>(i?'L':'M')+sx(p.w)+' '+sy(p.b)).join(' ');surf.appendChild(n('path',{d,fill:'none',stroke:'#d84a4a','stroke-width':3}))}
-  const cx=Math.max(box.l,Math.min(box.r,sx(w))),cy=Math.max(box.t,Math.min(box.b,sy(b)));surf.appendChild(n('circle',{cx,cy,r:7,fill:'#1e9b63',stroke:'#fff','stroke-width':2}));
+  surf.appendChild(n('circle',{cx:sx(olsW),cy:sy(olsB),r:8,fill:'none',stroke:'#ffffff','stroke-width':3}));surf.appendChild(n('circle',{cx:sx(olsW),cy:sy(olsB),r:5,fill:'#1e9b63'}));
+  const cx=Math.max(box.l,Math.min(box.r,sx(w))),cy=Math.max(box.t,Math.min(box.b,sy(b)));surf.appendChild(n('circle',{cx,cy,r:7,fill:'#d84a4a',stroke:'#fff','stroke-width':2}));
   const tx=n('text',{x:(box.l+box.r)/2,y:397,'text-anchor':'middle',fill:'#526479','font-size':13});tx.textContent='w';surf.appendChild(tx);
   const ty=n('text',{x:16,y:(box.t+box.b)/2,transform:`rotate(-90 16 ${(box.t+box.b)/2})`,'text-anchor':'middle',fill:'#526479','font-size':13});ty.textContent='b';surf.appendChild(ty);
  }
- function render(){drawFit();drawSurface();els.epoch.textContent=epoch;els.w.textContent=w.toFixed(3);els.b.textContent=b.toFixed(3);els.mse.textContent=mse(w,b).toFixed(3);els.lrVal.textContent=Number(els.lr.value).toFixed(3)}
+ function render(){drawFit();drawSurface();els.epoch.textContent=epoch;els.w.textContent=w.toFixed(3);els.b.textContent=b.toFixed(3);els.mse.textContent=mse(w,b).toFixed(3);const lr=Number(els.lr.value);els.lrVal.textContent=lr.toFixed(3);els.lrStatus.textContent=lr<0.006?'🐢 Oso egonkorra, baina motela':lr<=0.025?'✅ Tarte egonkorra':'⚠️ Arriskua: oszilazioa / dibergentzia';els.lrStatus.style.color=lr<=0.025?'#1e9b63':'#b23a3a'}
  function reset(ww=0,bb=0){w=ww;b=bb;epoch=0;path=[{w,b}];stop();render()}
  function stop(){if(timer){clearInterval(timer);timer=null;document.getElementById('run').textContent='Automatikoki ▶▶';document.getElementById('run').classList.remove('stop')}}
  document.getElementById('step').addEventListener('click',step);

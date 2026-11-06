@@ -1,6 +1,6 @@
 # 5072 · Ikaskuntza Automatikoko Sistemak — BETA
 
-Repositorio honen helburua **5072 · Ikaskuntza Automatikoko Sistemak** modulurako sortutako material didaktikoak eta demo interaktiboak modu egituratuan argitaratzea da.
+Biltegi honen helburua **5072 · Ikaskuntza Automatikoko Sistemak** modulurako sortutako material didaktikoak eta demo interaktiboak modu egituratuan argitaratzea da.
 
 ## 🧪 UD4 · Erregresioa — Demo interaktiboak
 
@@ -26,9 +26,9 @@ Repositorio honen helburua **5072 · Ikaskuntza Automatikoko Sistemak** modulura
 ### 3. Gradient Descent
 `demos/gradient-descent/`
 
-- regression line-a epoch bakoitzean;
+- erregresio-zuzena epoch bakoitzean;
 - `w`, `b` eta MSE;
-- learning rate;
+- ikaskuntza-tasa (learning rate);
 - urrats bakarra edo exekuzio automatikoa;
 - MSE haranaren mapa;
 - `forward → loss → gradients → update`.
@@ -36,11 +36,11 @@ Repositorio honen helburua **5072 · Ikaskuntza Automatikoko Sistemak** modulura
 ### 4. Ridge vs Lasso
 `demos/ridge-lasso/`
 
-- feature korrelazionatuak;
-- `α` penalty interaktiboa;
+- ezaugarri korrelazionatuak;
+- `α` zigor interaktiboa;
 - OLS / Ridge / Lasso koefizienteak;
-- Ridge → shrinkage;
-- Lasso → zero koefiziente posibleak.
+- Ridge → koefizienteak txikitu;
+- Lasso → koefiziente batzuk zerora.
 
 ## 📂 Beta egitura
 
@@ -61,7 +61,7 @@ Repositorio honen helburua **5072 · Ikaskuntza Automatikoko Sistemak** modulura
 
 ## 🌐 GitHub Pages
 
-Repositorioaren erroan:
+Biltegiaren erroan:
 
 ```text
 Settings → Pages
@@ -104,3 +104,25 @@ Helburua ez da algoritmoak mekanikoki erabiltzea, baizik eta **zer egiten duten,
 ## 📌 Egoera
 
 **BETA** — ikastaroa amaitzean notebook-ak, teoriak, irudiak, demo-ak eta ebaluazio-materialak egitura bateratu batean antolatuko dira.
+
+
+## 🕒 Noiz erabili demo bakoitza?
+
+```text
+1. Response Predictor   → 1. ariketaren amaieran
+2. MAE · RMSE · R²      → 2. ariketan
+3. Gradient Descent     → 3. ariketaren hasieran eta bitartean
+4. Ridge vs Lasso       → 4. ariketan
+```
+
+Demo-en ordenak UD4ko galdera nagusiak jarraitzen ditu:
+
+```text
+Zein da eredua?
+      ↓
+Nola neurtzen dugu errorea?
+      ↓
+Nola ikasten du?
+      ↓
+Nola kontrolatzen dugu konplexutasuna?
+```
