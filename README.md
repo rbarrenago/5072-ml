@@ -1,165 +1,91 @@
 # 5072 · Ikaskuntza Automatikoko Sistemak — BETA
 
-Repositorio honen helburua **5072 · Ikaskuntza Automatikoko Sistemak** modulurako sortutako material didaktikoak, notebook-ak eta demo interaktiboak modu egituratuan argitaratzea da.
+Repositorio honen helburua **5072 · Ikaskuntza Automatikoko Sistemak** modulurako sortutako material didaktikoak eta demo interaktiboak modu egituratuan argitaratzea da.
 
-Oraingoz, hau **Beta bertsioa** da. Lehenengo fase honetan baliabide interaktiboak argitaratzen hasiko gara; ikastaroa amaitzean, material guztia egitura bateratu batean antolatuko da.
+## 🧪 UD4 · Erregresioa — Demo interaktiboak
 
----
+### 1. Response Predictor · OLS
+`demos/erregresio-lineala/`
 
-## 🎯 Helburua
+- puntuak arrastatu;
+- OLS zuzena berriro kalkulatu;
+- hondarrak;
+- `b₀`, `b₁`, MSE eta R²;
+- `x` berri baterako iragarpena.
 
-Repositorio honen bidez ikasleek Machine Learning-eko kontzeptuak ez bakarrik teorikoki, baizik eta **modu bisual, praktiko eta interaktiboan** ulertzea nahi dugu.
+### 2. MAE · RMSE · R²
+`demos/metrikak/`
 
-Helburu nagusiak:
+- benetako eta iragarritako balioak;
+- errore uniformea;
+- outlier / errore handi bat;
+- bias;
+- baseline `ȳ`;
+- hiru metrikek egoera berari nola erantzuten dioten.
 
-- algoritmoen intuizioa ulertzea;
-- kodearen eta matematikaren arteko lotura ikustea;
-- modeloen portaera grafikoki esploratzea;
-- esperimentatuz ikastea;
-- Machine Learning-eko workflow osoa ulertzea.
+### 3. Gradient Descent
+`demos/gradient-descent/`
 
----
+- regression line-a epoch bakoitzean;
+- `w`, `b` eta MSE;
+- learning rate;
+- urrats bakarra edo exekuzio automatikoa;
+- MSE haranaren mapa;
+- `forward → loss → gradients → update`.
 
-## 🧪 Une honetan eskuragarri dagoen demo-a
+### 4. Ridge vs Lasso
+`demos/ridge-lasso/`
 
-### UD4 · Response Predictor — Erregresio lineala
+- feature korrelazionatuak;
+- `α` penalty interaktiboa;
+- OLS / Ridge / Lasso koefizienteak;
+- Ridge → shrinkage;
+- Lasso → zero koefiziente posibleak.
 
-Kokapena:
-
-```text
-demos/erregresio-lineala/index.html
-```
-
-Demo interaktibo honek **Least Squares / OLS erregresio lineala** modu bisualean ulertzeko aukera ematen du.
-
-Ikasleak honako hauek egin ditzake:
-
-- datu-puntuak arrastatu;
-- OLS zuzena automatikoki berriro kalkulatzen ikusi;
-- `ŷ = b₀ + b₁x` ekuazioa zuzenean ikusi;
-- `b₀` eta `b₁` parametroak interpretatu;
-- hondarrak (`residuals`) ikusi;
-- MSE eta R² nola aldatzen diren aztertu;
-- `x` berri baterako iragarpena egin;
-- zarata, outlier-ak eta malda negatiboak probatu;
-- puntu berriak gehitu.
-
-Demo-ak ez du kanpoko liburutegirik erabiltzen eta `index.html` fitxategi bakar gisa funtzionatzen du.
-
----
-
-## 📂 Oraingo Beta egitura
+## 📂 Beta egitura
 
 ```text
 5072-ml-beta/
 ├── index.html
 ├── README.md
 └── demos/
-    └── erregresio-lineala/
+    ├── erregresio-lineala/
+    │   └── index.html
+    ├── metrikak/
+    │   └── index.html
+    ├── gradient-descent/
+    │   └── index.html
+    └── ridge-lasso/
         └── index.html
 ```
 
-Beta bertsio honen helburua ez da oraindik ikastaro osoaren egitura behin betiko definitzea.
+## 🌐 GitHub Pages
 
-Lehen urratsa baliabide interaktibo interesgarrienak modu garbian argitaratzen hastea da.
-
----
-
-## 🌐 GitHub Pages bidez argitaratzea
-
-1. GitHub-en repositorio berri bat sortu, adibidez:
+Repositorioaren erroan:
 
 ```text
-5072-ml
+Settings → Pages
+Source: Deploy from a branch
+Branch: main
+Folder: / (root)
 ```
 
-2. Repositorioaren `main` branch-era karpeta honetako edukia igo:
-
-```text
-index.html
-README.md
-demos/
-```
-
-3. GitHub-en joan:
-
-```text
-Settings
-→ Pages
-```
-
-4. **Build and deployment** atalean aukeratu:
-
-```text
-Source:
-Deploy from a branch
-
-Branch:
-main
-
-Folder:
-/ (root)
-```
-
-5. Aldaketak gorde.
-
-Ondoren webgune nagusia honelako helbide batean egongo da:
+Adibidez:
 
 ```text
 https://ZURE-ERABILTZAILEA.github.io/5072-ml/
 ```
 
-Eta Linear Regression demo-a:
+Demo zuzenak:
 
 ```text
-https://ZURE-ERABILTZAILEA.github.io/5072-ml/demos/erregresio-lineala/
+/demos/erregresio-lineala/
+/demos/metrikak/
+/demos/gradient-descent/
+/demos/ridge-lasso/
 ```
-
----
-
-## 🚧 Etorkizunerako proposatutako egitura
-
-Ikastaroa amaitzean, repositorioa honelako egitura batean antolatzea aurreikusten da:
-
-```text
-5072-ml/
-├── index.html
-├── README.md
-│
-├── ud2-datuak/
-│   ├── notebooks/
-│   ├── irudiak/
-│   └── baliabideak/
-│
-├── ud3-sailkapena/
-│   ├── notebooks/
-│   ├── demos/
-│   └── irudiak/
-│
-├── ud4-erregresioa/
-│   ├── notebooks/
-│   ├── demos/
-│   └── irudiak/
-│
-├── ud5-deep-learning/
-│   ├── notebooks/
-│   ├── demos/
-│   └── irudiak/
-│
-├── ud6-unsupervised/
-│
-├── ud7-balidazioa/
-│
-└── ebaluazioa/
-```
-
-Egitura hau **orientagarria** da eta ikastaroaren garapenaren arabera egokituko da.
-
----
 
 ## 🧭 Ikaskuntza-ikuspegia
-
-Materialek ideia nagusi hau jarraitzen dute:
 
 ```text
 ulertu
@@ -173,57 +99,8 @@ esperimentatu
 interpretatu
 ```
 
-Helburua ez da algoritmoak mekanikoki erabiltzea.
-
-Helburua da ikasleek ulertzea:
-
-> **zer egiten duen modeloak, zergatik egiten duen eta noiz den egokia erabiltzea.**
-
----
-
-## 🔬 5072 ML Lab
-
-Etorkizunean repositorio hau **Machine Learning laborategi interaktibo txiki** bihurtzea da helburua.
-
-Besteak beste:
-
-```text
-SVM prediction
-xG predictor
-Linear Regression / OLS
-Gradient Descent
-Decision Trees
-Random Forest
-Clustering
-Neural Networks
-Validation
-```
-
-bezalako kontzeptuak modu interaktiboan aztertzeko baliabideak gehituko dira.
-
----
-
-## 🏫 Testuingurua
-
-Material hau **Lanbide Heziketako 5072 · Ikaskuntza Automatikoko Sistemak** modulurako garatzen ari da.
-
-Helburua Machine Learning-eko kontzeptuak FPko ikasleentzat:
-
-- ulergarriak,
-- bisualak,
-- praktikoak,
-- eta teknikoki zuzenak
-
-izatea da.
-
----
+Helburua ez da algoritmoak mekanikoki erabiltzea, baizik eta **zer egiten duten, zergatik egiten duten eta noiz erabiltzea komeni den ulertzea**.
 
 ## 📌 Egoera
 
-```text
-BETA
-```
-
-Repositorioa oraindik garatzen ari da.
-
-Ikastaroa amaitzean material guztiak berrikusi, egituratu eta dokumentazio bateratua sortuko da.
+**BETA** — ikastaroa amaitzean notebook-ak, teoriak, irudiak, demo-ak eta ebaluazio-materialak egitura bateratu batean antolatuko dira.

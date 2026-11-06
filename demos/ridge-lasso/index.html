@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="eu">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ridge vs Lasso Lab</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--ink:#10253f;--muted:#66758a;--line:#dbe3ec;--blue:#1e73d8;--green:#1e9b63;--red:#d84a4a;--navy:#123b67;--gold:#b8860b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,sans-serif;color:var(--ink)}
+.wrap{max-width:1160px;margin:auto;padding:28px 18px 44px}h1{font-size:clamp(30px,4vw,48px);margin:.1em 0}.eyebrow{color:var(--blue);font-weight:900;text-transform:uppercase;letter-spacing:.05em;font-size:13px}
+.subtitle{color:var(--muted);max-width:860px;line-height:1.5}.grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(300px,.8fr);gap:18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 8px 25px rgba(18,59,103,.05)}
+svg{display:block;width:100%;height:auto}.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.controls select{min-height:42px;border:1px solid #cbd6e2;border-radius:11px;background:#fff;padding:8px 11px}
+.alpha{margin:12px 0;padding:13px;border-radius:14px;background:#f1f7ff;border:1px solid #d4e6fa}.alpha input{width:100%}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}.metric{border:1px solid var(--line);border-radius:14px;padding:11px;background:#fbfcfe}.metric small{display:block;color:var(--muted);font-weight:800}.metric strong{font-size:22px}
+.compare{width:100%;border-collapse:collapse;font-size:14px}.compare th,.compare td{padding:8px;border-bottom:1px solid var(--line);text-align:right}.compare th:first-child,.compare td:first-child{text-align:left}
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.notes h3{margin:0 0 5px}.notes p{margin:0;color:var(--muted);font-size:14px;line-height:1.45}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.notes{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="eyebrow">5072 · UD4 · Erregularizazioa</div>
+<h1>Ridge vs Lasso</h1>
+<p class="subtitle">Bi metodoek koefiziente handiak zigortzen dituzte, baina ez modu berean: <strong>Ridge-k txikitu</strong> egiten ditu; <strong>Lasso-k batzuk 0ra</strong> eraman ditzake.</p>
+
+<div class="grid">
+<section class="card">
+  <div class="controls">
+    <label><strong>Dataset-a:</strong>
+      <select id="dataset"><option value="corr">x₁ eta x₂ oso korrelazionatuak</option><option value="ind">Korrelazio txikiagoa</option></select>
+    </label>
+  </div>
+  <div class="alpha">
+    <label><strong>α penalty:</strong> <span id="alphaVal">0.50</span></label>
+    <input id="alpha" type="range" min="0" max="3" value=".5" step=".02">
+    <div style="color:#66758a;font-size:13px;margin-top:5px">α handiagoa → penalty handiagoa → koefiziente txikiagoak.</div>
+  </div>
+  <svg id="bars" viewBox="0 0 820 480" aria-label="OLS, Ridge eta Lasso koefizienteen konparaketa"></svg>
+</section>
+
+<aside style="display:flex;flex-direction:column;gap:14px">
+  <section class="card">
+    <h3 style="margin-top:0">Uneko koefizienteak</h3>
+    <table class="compare">
+      <thead><tr><th>Modeloa</th><th>w₁</th><th>w₂</th><th>MSE</th></tr></thead>
+      <tbody>
+        <tr><td>OLS</td><td id="o1">–</td><td id="o2">–</td><td id="om">–</td></tr>
+        <tr><td>Ridge</td><td id="r1">–</td><td id="r2">–</td><td id="rm">–</td></tr>
+        <tr><td>Lasso</td><td id="l1">–</td><td id="l2">–</td><td id="lm">–</td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section class="card">
+    <div class="metrics">
+      <div class="metric"><small>corr(x₁,x₂)</small><strong id="corr">–</strong></div>
+      <div class="metric"><small>Lasso zero kop.</small><strong id="zeros">–</strong></div>
+    </div>
+    <p style="color:#66758a;font-size:14px;line-height:1.45"><strong>Kontuz:</strong> zero izatea ez da “feature hau beti alferrikakoa da” esatea. Datasetaren, korrelazioaren eta α-ren araberakoa da.</p>
+  </section>
+</aside>
+</div>
+
+<section class="notes">
+<div class="card"><h3>Ridge · L2</h3><p>Penalty karratua erabiltzen du. Informazioa banatu ohi du feature korrelazionatuen artean eta koefizienteak txikiago bihurtzen ditu, normalean 0 zehatza lortu gabe.</p></div>
+<div class="card"><h3>Lasso · L1</h3><p>Penalty absolutua erabiltzen du. Soluzio “sparse”-ak sustatzen ditu: koefiziente batzuk zehazki 0 izan daitezke, feature-selection efektuarekin.</p></div>
+</section>
+</div>
+
+<script>
+(() => {
+ const NS='http://www.w3.org/2000/svg', svg=document.getElementById('bars'), alpha=document.getElementById('alpha'), dataset=document.getElementById('dataset');
+ const ids={o1:'o1',o2:'o2',om:'om',r1:'r1',r2:'r2',rm:'rm',l1:'l1',l2:'l2',lm:'lm',corr:'corr',zeros:'zeros'};
+ const el={};for(const[k,v]of Object.entries(ids))el[k]=document.getElementById(v);const aval=document.getElementById('alphaVal');
+ let X=[],y=[];
+ function data(kind){
+   X=[];y=[];let seed=17;const rand=()=>{seed=(seed*9301+49297)%233280;return seed/233280};const gauss=()=>{const u=Math.max(rand(),1e-6),v=Math.max(rand(),1e-6);return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)};
+   for(let i=0;i<80;i++){const x1=gauss();const x2=kind==='corr'?0.94*x1+0.34*gauss():0.25*x1+0.97*gauss();const yy=4*x1+0.35*x2+1.1*gauss();X.push([x1,x2]);y.push(yy)}
+   standardize();
+ }
+ function standardize(){
+   for(let j=0;j<2;j++){const m=X.reduce((s,r)=>s+r[j],0)/X.length;const sd=Math.sqrt(X.reduce((s,r)=>s+(r[j]-m)**2,0)/X.length);X=X.map(r=>r.map((v,k)=>k===j?(v-m)/sd:v))}
+   const my=y.reduce((a,b)=>a+b,0)/y.length;y=y.map(v=>v-my);
+ }
+ const dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
+ function cov(){let a=0,b=0,c=0,d=0;for(const r of X){a+=r[0]*r[0];b+=r[0]*r[1];c+=r[1]*r[0];d+=r[1]*r[1]}const n=X.length;return [a/n,b/n,c/n,d/n]}
+ function xty(){let a=0,b=0;for(let i=0;i<X.length;i++){a+=X[i][0]*y[i];b+=X[i][1]*y[i]}return [a/X.length,b/X.length]}
+ function solve2(A,v){const [a,b,c,d]=A,det=a*d-b*c;return [(d*v[0]-b*v[1])/det,(-c*v[0]+a*v[1])/det]}
+ function ridge(a){const C=cov(),v=xty();return solve2([C[0]+a,C[1],C[2],C[3]+a],v)}
+ const soft=(z,g)=>Math.sign(z)*Math.max(Math.abs(z)-g,0);
+ function lasso(a){let b=[0,0];for(let it=0;it<120;it++){for(let j=0;j<2;j++){let rho=0,den=0;for(let i=0;i<X.length;i++){let partial=y[i];for(let k=0;k<2;k++)if(k!==j)partial-=X[i][k]*b[k];rho+=X[i][j]*partial;den+=X[i][j]*X[i][j]}rho/=X.length;den/=X.length;b[j]=soft(rho,a)/den}}return b}
+ function mse(b){return y.reduce((s,yy,i)=>s+(yy-dot(X[i],b))**2,0)/y.length}
+ function corr(){const a=X.map(r=>r[0]),b=X.map(r=>r[1]);return a.reduce((s,v,i)=>s+v*b[i],0)/a.length}
+ function node(tag,a={}){const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(a))e.setAttribute(k,v);return e}
+ function draw(vals){
+   while(svg.firstChild)svg.removeChild(svg.firstChild);svg.appendChild(node('rect',{x:0,y:0,width:820,height:480,rx:16,fill:'#fbfdff'}));
+   const box={l:74,t:30,r:790,b:415}, max=5,sy=v=>box.b-(v+max)/(2*max)*(box.b-box.t);
+   svg.appendChild(node('line',{x1:box.l,y1:sy(0),x2:box.r,y2:sy(0),stroke:'#526479','stroke-width':2}));
+   for(let g=-4;g<=4;g+=2){svg.appendChild(node('line',{x1:box.l,y1:sy(g),x2:box.r,y2:sy(g),stroke:'#e5ebf2'}));const t=node('text',{x:box.l-12,y:sy(g)+5,'text-anchor':'end',fill:'#68798c','font-size':13});t.textContent=g;svg.appendChild(t)}
+   const models=[['OLS',vals.o,'#123b67'],['Ridge',vals.r,'#1e73d8'],['Lasso',vals.l,'#1e9b63']], centers=[190,420,650];
+   models.forEach((m,mi)=>{[-1,1].forEach((off,j)=>{const v=m[1][j],x=centers[mi]+off*35,y0=sy(0),yv=sy(v),h=Math.abs(y0-yv);svg.appendChild(node('rect',{x:x-24,y:Math.min(y0,yv),width:48,height:h,rx:5,fill:m[2]}));const lab=node('text',{x,y:box.b+25,'text-anchor':'middle',fill:'#526479','font-size':12});lab.textContent='w'+(j+1);svg.appendChild(lab)});const title=node('text',{x:centers[mi],y:462,'text-anchor':'middle',fill:'#20364e','font-weight':800});title.textContent=m[0];svg.appendChild(title)})
+ }
+ function render(){
+   const a=Number(alpha.value),o=ridge(0.000001),r=ridge(a),l=lasso(a);draw({o,r,l});aval.textContent=a.toFixed(2);
+   el.o1.textContent=o[0].toFixed(2);el.o2.textContent=o[1].toFixed(2);el.om.textContent=mse(o).toFixed(2);
+   el.r1.textContent=r[0].toFixed(2);el.r2.textContent=r[1].toFixed(2);el.rm.textContent=mse(r).toFixed(2);
+   el.l1.textContent=l[0].toFixed(2);el.l2.textContent=l[1].toFixed(2);el.lm.textContent=mse(l).toFixed(2);
+   el.corr.textContent=corr().toFixed(2);el.zeros.textContent=l.filter(v=>Math.abs(v)<1e-8).length;
+ }
+ alpha.addEventListener('input',render);dataset.addEventListener('change',()=>{data(dataset.value);render()});
+ data('corr');render();
+})();
+</script>
+</body></html>

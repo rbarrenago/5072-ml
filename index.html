@@ -2,29 +2,27 @@
 <html lang="eu">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>5072 · Ikaskuntza Automatikoko Sistemak · BETA</title>
+<title>5072 ML Lab · BETA</title>
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#10253f;--muted:#66758a;--blue:#1e73d8;--line:#dbe3ec}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,sans-serif;color:var(--ink)}
-main{max-width:980px;margin:auto;padding:54px 20px}h1{font-size:clamp(34px,6vw,62px);margin:0;line-height:1}
-.kicker{font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.05em}
+main{max-width:1060px;margin:auto;padding:50px 20px}h1{font-size:clamp(36px,6vw,64px);margin:.1em 0;line-height:1}.kicker{font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.06em}
 p{color:var(--muted);line-height:1.55}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:30px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;text-decoration:none;color:inherit;display:block}
-.card:hover{border-color:var(--blue)}.tag{display:inline-block;background:#eaf3ff;color:var(--blue);border-radius:999px;padding:5px 9px;font-size:12px;font-weight:800}
-.arrow{font-size:28px;color:var(--blue)}footer{margin-top:40px;color:var(--muted);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;text-decoration:none;color:inherit;display:block}.card:hover{border-color:var(--blue)}
+.tag{display:inline-block;background:#eaf3ff;color:var(--blue);border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900}.arrow{font-size:28px;color:var(--blue)}
+footer{margin-top:42px;color:var(--muted);font-size:13px}
 </style>
 </head>
 <body><main>
-<div class="kicker">BETA · 5072</div>
+<div class="kicker">BETA · 5072 ML LAB</div>
 <h1>Ikaskuntza Automatikoko Sistemak</h1>
-<p>Ikasmaterial, notebook eta demo interaktiboen etorkizuneko biltegiaren lehen Beta. Une honetan demo interaktiboak argitaratzen hasiko gara; ikastaroaren amaieran egitura osoa bateratuko da.</p>
+<p>Machine Learning-eko kontzeptuak <strong>ikusi, manipulatu eta esperimentatzeko</strong> demo interaktiboak. Beta honetan UD4 · Erregresioa lantzeko lau laborategi daude.</p>
+
 <section class="cards">
-<a class="card" href="demos/erregresio-lineala/">
-<span class="tag">UD4 · Erregresioa</span>
-<h2>Response Predictor</h2>
-<p>Least Squares modu interaktiboan: puntuak mugitu, hondarrak ikusi, OLS zuzena berriro kalkulatu eta ŷ = b₀ + b₁x erabiliz iragarpenak egin.</p>
-<div class="arrow">→</div>
-</a>
+<a class="card" href="demos/erregresio-lineala/"><span class="tag">1 · OLS</span><h2>Response Predictor</h2><p>Puntuak mugitu, hondarrak ikusi eta ŷ = b₀ + b₁x zuzen onena nola aldatzen den ulertu.</p><div class="arrow">→</div></a>
+<a class="card" href="demos/metrikak/"><span class="tag">2 · METRIKAK</span><h2>MAE · RMSE · R²</h2><p>Errore berdinak, outlier-ak eta baseline-a manipulatuz hiru metrikek zer neurtzen duten alderatu.</p><div class="arrow">→</div></a>
+<a class="card" href="demos/gradient-descent/"><span class="tag">3 · OPTIMIZAZIOA</span><h2>Gradient Descent</h2><p>Forward → MSE → gradient → update zikloa urratsez urrats ikusi, learning rate-aren efektuarekin.</p><div class="arrow">→</div></a>
+<a class="card" href="demos/ridge-lasso/"><span class="tag">4 · REGULARIZATION</span><h2>Ridge vs Lasso</h2><p>α handitu eta ikusi Ridge-k koefizienteak nola txikitzen dituen eta Lasso-k nola eraman ditzakeen 0ra.</p><div class="arrow">→</div></a>
 </section>
 <footer>IES Xabier Zubiri-Manteo BHI · 5072 · Beta materials</footer>
 </main></body></html>

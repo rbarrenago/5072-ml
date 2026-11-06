@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="eu">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gradient Descent Lab · Aizkorritik haranera</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--ink:#10253f;--muted:#66758a;--line:#dbe3ec;--blue:#1e73d8;--red:#d84a4a;--green:#1e9b63;--navy:#123b67}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,sans-serif;color:var(--ink)}
+.wrap{max-width:1180px;margin:auto;padding:28px 18px 44px}h1{font-size:clamp(30px,4vw,48px);margin:.1em 0}.eyebrow{color:var(--blue);font-weight:900;text-transform:uppercase;letter-spacing:.05em;font-size:13px}
+.subtitle{color:var(--muted);line-height:1.5;max-width:860px}.layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.85fr);gap:18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:15px;box-shadow:0 8px 25px rgba(18,59,103,.05)}
+svg{display:block;width:100%;height:auto}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+button,input{font:inherit}button{min-height:42px;border:1px solid #cbd6e2;background:#fff;border-radius:11px;padding:8px 12px;font-weight:800;cursor:pointer}
+button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}button.stop{background:#fff1f1;border-color:#efb8b8;color:#a52b2b}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.stat{background:#fbfcfe;border:1px solid var(--line);border-radius:13px;padding:10px}.stat small{color:var(--muted);display:block;font-weight:800}.stat strong{font-size:22px}
+.lr{margin:12px 0;padding:12px;background:#f1f7ff;border:1px solid #d4e6fa;border-radius:14px}.lr input{width:100%}
+.flow{font-weight:900;text-align:center;padding:13px;border-radius:14px;background:#f6fbf8;border:1px solid #d7eee0;margin-top:10px}
+.note{color:var(--muted);font-size:14px;line-height:1.45}.side{display:flex;flex-direction:column;gap:14px}
+@media(max-width:820px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="eyebrow">5072 · UD4 · Gradient Descent</div>
+<h1>Aizkorritik haranera</h1>
+<p class="subtitle">Modeloa ez da “bat-batean” zuzena aurkitzen. <strong>Predikzioa → MSE → gradientea → update</strong> zikloa errepikatzen du. Egin urratsak eskuz edo automatikoki.</p>
+
+<div class="layout">
+<section class="card">
+  <div class="toolbar">
+    <button id="step" type="button" class="primary">1 urrats ▶</button>
+    <button id="run" type="button">Automatikoki ▶▶</button>
+    <button id="reset" type="button">Berrezarri</button>
+    <button id="badStart" type="button">Hasiera txarra</button>
+  </div>
+  <svg id="fitPlot" viewBox="0 0 860 470" aria-label="Datuak eta uneko erregresio zuzena"></svg>
+  <div class="stats">
+    <div class="stat"><small>epoch</small><strong id="epoch">0</strong></div>
+    <div class="stat"><small>w</small><strong id="w">0</strong></div>
+    <div class="stat"><small>b</small><strong id="b">0</strong></div>
+    <div class="stat"><small>MSE</small><strong id="mse">–</strong></div>
+  </div>
+  <div class="lr"><label><strong>Learning rate η:</strong> <span id="lrVal">0.08</span></label><input id="lr" type="range" min="0.005" max="0.30" step="0.005" value="0.08"><p class="note" style="margin-bottom:0">Txikiegia → motela. Handiegia → minimoa gainditu, oszilatu edo dibergitu.</p></div>
+</section>
+
+<aside class="side">
+  <section class="card">
+    <h3 style="margin-top:0">MSE “harana” · w vs b</h3>
+    <svg id="surface" viewBox="0 0 520 410" aria-label="MSE gainazalaren mapa eta Gradient Descent bidea"></svg>
+    <p class="note">Kolore argiagoa = MSE txikiagoa. Lerroak GD-k egin duen bidea erakusten du. Helburua haranaren behealdera iristea da.</p>
+  </section>
+  <section class="card">
+    <h3 style="margin-top:0">Motorra</h3>
+    <div class="flow">forward → loss → gradients → update</div>
+    <p class="note">Erregresio linealean MSE gainazala ganbila da. Beraz, learning rate egokia erabiliz, minimo globalera hurbiltzen gara.</p>
+  </section>
+</aside>
+</div>
+</div>
+
+<script>
+(() => {
+ const NS='http://www.w3.org/2000/svg', fit=document.getElementById('fitPlot'), surf=document.getElementById('surface');
+ const els={epoch:document.getElementById('epoch'),w:document.getElementById('w'),b:document.getElementById('b'),mse:document.getElementById('mse'),lr:document.getElementById('lr'),lrVal:document.getElementById('lrVal')};
+ const xs=[.5,1.2,2,2.8,3.6,4.5,5.5,6.2,7,8,8.8,9.5];
+ const ys=[2.1,2.9,3.4,4.4,4.7,5.9,6.7,7.2,7.8,8.7,9.2,9.6];
+ let w=0,b=0,epoch=0,path=[],timer=null;
+ const mean=a=>a.reduce((s,v)=>s+v,0)/a.length;
+ function mse(ww,bb){return mean(xs.map((x,i)=>(ys[i]-(ww*x+bb))**2))}
+ function grads(){const n=xs.length;let dw=0,db=0;for(let i=0;i<n;i++){const e=(w*xs[i]+b)-ys[i];dw+=e*xs[i];db+=e}return {dw:2*dw/n,db:2*db/n}}
+ function step(){const g=grads(),lr=Number(els.lr.value);w-=lr*g.dw;b-=lr*g.db;epoch++;path.push({w,b});render()}
+ function n(tag,a={}){const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(a))e.setAttribute(k,v);return e}
+ function clear(s){while(s.firstChild)s.removeChild(s.firstChild)}
+ function drawFit(){
+  clear(fit);fit.appendChild(n('rect',{x:0,y:0,width:860,height:470,rx:16,fill:'#fbfdff'}));
+  const box={l:60,t:28,r:830,b:420},sx=x=>box.l+x/10*(box.r-box.l),sy=y=>box.b-y/12*(box.b-box.t);
+  for(let i=0;i<=10;i+=2){fit.appendChild(n('line',{x1:sx(i),y1:box.t,x2:sx(i),y2:box.b,stroke:'#e8edf3'}));fit.appendChild(n('line',{x1:box.l,y1:sy(i),x2:box.r,y2:sy(i),stroke:'#e8edf3'}))}
+  xs.forEach((x,i)=>fit.appendChild(n('circle',{cx:sx(x),cy:sy(ys[i]),r:7,fill:'#1e73d8'})));
+  fit.appendChild(n('line',{x1:sx(0),y1:sy(b),x2:sx(10),y2:sy(w*10+b),stroke:'#123b67','stroke-width':4,'stroke-linecap':'round'}));
+ }
+ function drawSurface(){
+  clear(surf);surf.appendChild(n('rect',{x:0,y:0,width:520,height:410,rx:14,fill:'#fbfdff'}));
+  const box={l:48,t:25,r:495,b:365}, wr=[-1,2], br=[-2,6], cols=22, rows=22;
+  let vals=[],max=0,min=1e99;
+  for(let j=0;j<rows;j++){vals[j]=[];for(let i=0;i<cols;i++){const ww=wr[0]+i/(cols-1)*(wr[1]-wr[0]),bb=br[0]+j/(rows-1)*(br[1]-br[0]),v=mse(ww,bb);vals[j][i]=v;max=Math.max(max,v);min=Math.min(min,v)}}
+  const cw=(box.r-box.l)/cols,ch=(box.b-box.t)/rows;
+  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const t=(vals[j][i]-min)/(max-min),light=94-46*Math.sqrt(t);surf.appendChild(n('rect',{x:box.l+i*cw,y:box.b-(j+1)*ch,width:cw+1,height:ch+1,fill:`hsl(210 65% ${light}%)`,stroke:'none'}))}
+  const sx=ww=>box.l+(ww-wr[0])/(wr[1]-wr[0])*(box.r-box.l),sy=bb=>box.b-(bb-br[0])/(br[1]-br[0])*(box.b-box.t);
+  if(path.length>1){let d=path.map((p,i)=>(i?'L':'M')+sx(p.w)+' '+sy(p.b)).join(' ');surf.appendChild(n('path',{d,fill:'none',stroke:'#d84a4a','stroke-width':3}))}
+  const cx=Math.max(box.l,Math.min(box.r,sx(w))),cy=Math.max(box.t,Math.min(box.b,sy(b)));surf.appendChild(n('circle',{cx,cy,r:7,fill:'#1e9b63',stroke:'#fff','stroke-width':2}));
+  const tx=n('text',{x:(box.l+box.r)/2,y:397,'text-anchor':'middle',fill:'#526479','font-size':13});tx.textContent='w';surf.appendChild(tx);
+  const ty=n('text',{x:16,y:(box.t+box.b)/2,transform:`rotate(-90 16 ${(box.t+box.b)/2})`,'text-anchor':'middle',fill:'#526479','font-size':13});ty.textContent='b';surf.appendChild(ty);
+ }
+ function render(){drawFit();drawSurface();els.epoch.textContent=epoch;els.w.textContent=w.toFixed(3);els.b.textContent=b.toFixed(3);els.mse.textContent=mse(w,b).toFixed(3);els.lrVal.textContent=Number(els.lr.value).toFixed(3)}
+ function reset(ww=0,bb=0){w=ww;b=bb;epoch=0;path=[{w,b}];stop();render()}
+ function stop(){if(timer){clearInterval(timer);timer=null;document.getElementById('run').textContent='Automatikoki ▶▶';document.getElementById('run').classList.remove('stop')}}
+ document.getElementById('step').addEventListener('click',step);
+ document.getElementById('run').addEventListener('click',()=>{if(timer){stop();return}document.getElementById('run').textContent='Gelditu ■';document.getElementById('run').classList.add('stop');timer=setInterval(()=>{step();if(epoch>250||!Number.isFinite(mse(w,b))||mse(w,b)>1e8)stop()},180)});
+ document.getElementById('reset').addEventListener('click',()=>reset(0,0));
+ document.getElementById('badStart').addEventListener('click',()=>reset(-.8,5.2));
+ els.lr.addEventListener('input',render);
+ reset();
+})();
+</script>
+</body></html>
