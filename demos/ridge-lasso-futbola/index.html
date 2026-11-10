@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="eu">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>5072 ML Lab · Ridge vs Lasso · Futbolariaren balioa</title>
+<style>
+:root{
+  --bg:#f6f8fb; --card:#ffffff; --ink:#152238; --muted:#607087; --line:#dce4ee;
+  --blue:#2468d6; --blue2:#eaf2ff; --green:#16885a; --green2:#eaf8f2;
+  --orange:#b66a00; --orange2:#fff4df; --red:#b64242; --red2:#fff0f0;
+  --purple:#7048b5; --purple2:#f2edff;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+a{color:var(--blue)}
+.wrap{max-width:1240px;margin:0 auto;padding:22px}
+.topbar{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:18px}
+.brand{font-weight:800;letter-spacing:.03em}
+.back{font-size:.95rem;text-decoration:none}
+.hero{background:linear-gradient(135deg,#fff,#eef5ff);border:1px solid var(--line);border-radius:24px;padding:26px;margin-bottom:18px}
+.hero h1{margin:0 0 8px;font-size:clamp(1.8rem,4vw,3rem)}
+.hero p{margin:0;color:var(--muted);font-size:1.05rem;line-height:1.55}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}
+.step{border-radius:16px;padding:14px;border:1px solid var(--line);background:#fff;min-width:0}
+.step strong{display:block;margin-bottom:5px}
+.step small{color:var(--muted)}
+.step.model{background:var(--blue2);border-color:#bfd5fb}
+.step.eval{background:var(--green2);border-color:#bde4d3}
+.not-equal{margin-top:14px;padding:12px 14px;border-radius:14px;background:var(--orange2);color:#754700;font-weight:700}
+.grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:18px}
+.card h2,.card h3{margin-top:0}
+.sub{color:var(--muted);line-height:1.45}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
+button{border:1px solid #c8d4e2;background:white;color:var(--ink);border-radius:12px;padding:10px 13px;font:inherit;font-weight:700;cursor:pointer}
+button:hover{border-color:#8fb3ea;background:#f7faff}
+button.active{background:var(--blue);color:white;border-color:var(--blue)}
+.slider-row{display:grid;grid-template-columns:78px 1fr 58px;gap:12px;align-items:center;margin:10px 0}
+.slider-row label{font-weight:800}
+.slider-row output{text-align:right;font-variant-numeric:tabular-nums;font-weight:800}
+input[type="range"]{width:100%;accent-color:var(--blue)}
+.alpha-wrap{display:grid;grid-template-columns:1fr 110px;gap:16px;align-items:center}
+.alpha-big{font-size:2rem;font-weight:900;text-align:center;color:var(--purple)}
+.formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px;overflow:auto}
+.models{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.modelbox{border-radius:18px;padding:16px;border:1px solid var(--line);background:#fff}
+.modelbox.ols{border-top:5px solid var(--blue)}
+.modelbox.ridge{border-top:5px solid var(--green)}
+.modelbox.lasso{border-top:5px solid var(--purple)}
+.modelbox h3{margin:0 0 8px}
+.pred{font-size:1.9rem;font-weight:900;margin:8px 0}
+.mini{font-size:.9rem;color:var(--muted)}
+.coef-table,.metric-table{width:100%;border-collapse:collapse}
+.coef-table th,.coef-table td,.metric-table th,.metric-table td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums}
+.coef-table th:first-child,.coef-table td:first-child,.metric-table th:first-child,.metric-table td:first-child{text-align:left}
+.zero{font-weight:900;color:var(--purple)}
+.best{font-weight:900;color:var(--green)}
+.bars{margin-top:14px}
+.bar-row{display:grid;grid-template-columns:75px 1fr;gap:12px;align-items:center;margin:8px 0}
+.bar-label{font-weight:800;font-size:.9rem}
+.bar-area{position:relative;height:26px;background:#f2f5f9;border-radius:9px;overflow:hidden}
+.zero-line{position:absolute;left:50%;top:0;bottom:0;width:1px;background:#9aa8b8}
+.bar{position:absolute;top:4px;height:18px;border-radius:7px;min-width:1px}
+.bar.pos{left:50%}
+.bar.neg{right:50%}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.86rem;color:var(--muted);margin-top:10px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+.callout{padding:14px 16px;border-radius:14px;margin-top:14px;line-height:1.5}
+.callout.blue{background:var(--blue2)}
+.callout.green{background:var(--green2)}
+.callout.orange{background:var(--orange2)}
+.question{font-size:1.08rem;font-weight:800}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pill{display:inline-block;border-radius:999px;padding:4px 9px;font-size:.78rem;font-weight:800;background:#eef2f7;color:#46576d}
+.footer{color:var(--muted);font-size:.88rem;padding:6px 2px 28px}
+@media (max-width:900px){
+ .grid,.two{grid-template-columns:1fr}
+ .models{grid-template-columns:1fr}
+ .flow{grid-template-columns:1fr 1fr}
+}
+@media (max-width:560px){
+ .wrap{padding:12px}
+ .flow{grid-template-columns:1fr}
+ .slider-row{grid-template-columns:68px 1fr 48px}
+ .alpha-wrap{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">🧪 5072 ML LAB · UD4 ERREGRESIOA</div>
+    <a class="back" href="../../">← 5072 ML Lab-era itzuli</a>
+  </div>
+
+  <section class="hero">
+    <span class="pill">DEMO INTERAKTIBOA</span>
+    <h1>⚽ Futbolariaren balioa: OLS vs Ridge vs Lasso</h1>
+    <p>EA SPORTS FC estiloko ezaugarriak erabiliz, hiru erregresio-modeloek koefizienteak nola ikasten dituzten eta <strong>MAE · RMSE · R²</strong> geroago nola erabiltzen diren ebaluatzeko ikusiko dugu.</p>
+
+    <div class="flow">
+      <div class="step"><strong>1 · DATUAK</strong><small>OVR, AGE, PAC, SHO, PAS, DRI, DEF, PHY</small></div>
+      <div class="step model"><strong>2 · MODELOA</strong><small>OLS / Ridge / Lasso</small></div>
+      <div class="step"><strong>3 · PREDIKZIOA</strong><small>Merkatu-balioa (M€)</small></div>
+      <div class="step eval"><strong>4 · EBALUAZIOA</strong><small>MAE / RMSE / R²</small></div>
+    </div>
+    <div class="not-equal">⚠️ Ridge eta Lasso MODELOAK dira. MAE, RMSE eta R² METRIKAK dira. Ez dira maila bereko kontzeptuak.</div>
+  </section>
+
+  <div class="grid">
+    <div>
+      <section class="card">
+        <h2>1 · Sortu zure futbolaria</h2>
+        <p class="sub">Aldatu atributuak edo aukeratu profil bat. Helburua ez da FIFA/EA FC-ren balio ofiziala kalkulatzea: <strong>erregularizazioa ulertzeko dataset sintetiko didaktiko</strong> bat erabiltzen dugu.</p>
+        <div class="presets">
+          <button data-preset="winger">⚡ Hegalekoa</button>
+          <button data-preset="striker">🎯 Aurrelaria</button>
+          <button data-preset="mid">🎩 Erdilaria</button>
+          <button data-preset="cb">🛡️ Erdiko atzelaria</button>
+          <button data-preset="prospect">🌱 Gazte-promesa</button>
+        </div>
+        <div id="sliders"></div>
+      </section>
+
+      <section class="card">
+        <h2>2 · Erregularizazioaren indarra</h2>
+        <div class="alpha-wrap">
+          <div>
+            <input id="alpha" type="range" min="0" max="3" value="0.15" step="0.05" aria-label="Alpha erregularizazioaren indarra">
+            <p class="sub">α = 0 → erregularizaziorik ez. α handitzean Ridge eta Lasso koefizienteak gehiago kontrolatzen saiatzen dira.</p>
+          </div>
+          <div>
+            <div class="alpha-big">α = <span id="alphaVal">0.15</span></div>
+          </div>
+        </div>
+
+        <div class="two">
+          <div>
+            <h3>Ridge · L2</h3>
+            <div class="formula">errorea + α · Σw²</div>
+            <p class="sub">Koefizienteen magnitude orokorra kontrolatzen du; korrelazioa dagoenean pisuen banaketa ere alda daiteke. Normalean ez ditu koefizienteak zehazki 0 bihurtzen.</p>
+          </div>
+          <div>
+            <h3>Lasso · L1</h3>
+            <div class="formula">errorea + α · Σ|w|</div>
+            <p class="sub">Koefizienteak txikitu eta batzuk zehazki 0 bihur ditzake.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div>
+      <section class="card">
+        <h2>3 · Futbolari honen predikzioa</h2>
+        <div class="models">
+          <div class="modelbox ols">
+            <h3>OLS</h3>
+            <div class="pred" id="predOLS">—</div>
+            <div class="mini">Errorea minimizatzen du, zigorrik gabe.</div>
+          </div>
+          <div class="modelbox ridge">
+            <h3>Ridge</h3>
+            <div class="pred" id="predRidge">—</div>
+            <div class="mini">Koefizienteak egonkortu / txikitu.</div>
+          </div>
+          <div class="modelbox lasso">
+            <h3>Lasso</h3>
+            <div class="pred" id="predLasso">—</div>
+            <div class="mini">Koefiziente batzuk 0 izan daitezke.</div>
+          </div>
+        </div>
+        <div class="callout blue" id="predictionNote"></div>
+      </section>
+
+      <section class="card">
+        <h2>4 · Zer gertatu da koefizienteekin?</h2>
+        <p class="sub">Ezaugarriak estandarizatuta daude. Horregatik koefizienteak eskala berean konpara daitezke. Balioek <strong>ereduaren barruko pisua</strong> adierazten dute, ez futbolaren munduko “benetako garrantzia”.</p>
+        <div class="bars" id="bars"></div>
+        <div class="legend">
+          <span><i class="dot" style="background:#2468d6"></i>OLS</span>
+          <span><i class="dot" style="background:#16885a"></i>Ridge</span>
+          <span><i class="dot" style="background:#7048b5"></i>Lasso</span>
+        </div>
+        <div style="overflow:auto;margin-top:12px">
+          <table class="coef-table">
+            <thead><tr><th>Feature</th><th>OLS</th><th>Ridge</th><th>Lasso</th></tr></thead>
+            <tbody id="coefBody"></tbody>
+          </table>
+        </div>
+        <div class="callout orange" id="lassoNote"></div>
+      </section>
+    </div>
+  </div>
+
+  <section class="card">
+    <h2>5 · Eta MAE · RMSE · R²?</h2>
+    <p class="sub">Orain bai: modeloak entrenatu eta predikzioak egin ondoren, TEST multzoan <strong>ebaluatu</strong> ditzakegu. Metrikek ez dituzte koefizienteak ikasten; modeloa zenbateraino dabilen ondo neurtzen dute.</p>
+    <div style="overflow:auto">
+      <table class="metric-table">
+        <thead><tr><th>Modeloa</th><th>MAE ↓</th><th>RMSE ↓</th><th>R² ↑</th></tr></thead>
+        <tbody id="metricBody"></tbody>
+      </table>
+    </div>
+    <div class="callout green">
+      <strong>Gogoratu:</strong> OLS / Ridge / Lasso = <strong>modelatzeko moduak</strong>. MAE / RMSE / R² = <strong>ebaluatzeko moduak</strong>.
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>6 · Pentsatzeko galderak</h2>
+    <p class="question">① Lasso-k DEF = 0 jartzen badu, defendatzea futbolean ez dela garrantzitsua esan nahi du?</p>
+    <p class="sub">Ez. Dataset honetan eta beste feature guztiak kontuan hartuta, modeloak balioa iragartzeko DEF aparteko informazio nahikorik behar ez duela esan dezake.</p>
+    <p class="question">② Zergatik izan daiteke Ridge interesgarria OVR, PAC, SHO, PAS eta DRI elkarren artean erlazionatuta badaude?</p>
+    <p class="sub">Ridge-k informazioa ezaugarri korrelazionatuen artean modu egonkorragoan banatzeko joera du.</p>
+    <p class="question">③ α oso handia jartzea beti hobea al da?</p>
+    <p class="sub">Ez. Erregularizazio gehiegi → koefiziente gehiegi txikitu → underfitting arriskua.</p>
+  </section>
+
+  <div class="footer">
+    5072 ML Lab · Dataset eta emaitzak didaktikoak eta sintetikoak dira; ez dira EA SPORTS FC-ren edo futbol-merkatu errealaren balorazio ofizialak.
+  </div>
+</div>
+
+<script>
+(() => {
+"use strict";
+
+const FEATURES = [
+  {key:"OVR", label:"OVR", min:55, max:92},
+  {key:"AGE", label:"AGE", min:18, max:35},
+  {key:"PAC", label:"PAC", min:45, max:96},
+  {key:"SHO", label:"SHO", min:35, max:95},
+  {key:"PAS", label:"PAS", min:35, max:95},
+  {key:"DRI", label:"DRI", min:35, max:96},
+  {key:"DEF", label:"DEF", min:20, max:95},
+  {key:"PHY", label:"PHY", min:35, max:95}
+];
+
+const presets = {
+  winger:{OVR:88,AGE:23,PAC:93,SHO:82,PAS:80,DRI:91,DEF:38,PHY:70},
+  striker:{OVR:89,AGE:26,PAC:88,SHO:92,PAS:76,DRI:86,DEF:35,PHY:84},
+  mid:{OVR:87,AGE:25,PAC:76,SHO:80,PAS:91,DRI:88,DEF:70,PHY:76},
+  cb:{OVR:88,AGE:28,PAC:76,SHO:48,PAS:74,DRI:69,DEF:91,PHY:90},
+  prospect:{OVR:78,AGE:19,PAC:89,SHO:74,PAS:76,DRI:85,DEF:42,PHY:66}
+};
+
+let player = {...presets.winger};
+let trainX=[], trainY=[], testX=[], testY=[];
+let scaler=null;
+
+function mulberry32(a){
+  return function(){
+    let t=a+=0x6D2B79F5;
+    t=Math.imul(t^t>>>15,t|1);
+    t^=t+Math.imul(t^t>>>7,t|61);
+    return ((t^t>>>14)>>>0)/4294967296;
+  }
+}
+const rng=mulberry32(5072);
+function randn(){
+  let u=0,v=0;
+  while(u===0)u=rng(); while(v===0)v=rng();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+}
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+function generateDataset(n=260){
+  const rows=[];
+  for(let i=0;i<n;i++){
+    const age=Math.round(18+rng()*16);
+    const talent=58+rng()*31;
+    const ovr=clamp(Math.round(talent+randn()*2.5),55,92);
+    const pac=clamp(Math.round(ovr + 7 - .65*(age-22) + randn()*7),45,96);
+    const sho=clamp(Math.round(ovr - 4 + randn()*9),35,95);
+    const pas=clamp(Math.round(ovr - 3 + randn()*8),35,95);
+    const dri=clamp(Math.round(ovr + 1 + randn()*7),35,96);
+    const def=clamp(Math.round(52 + .45*(ovr-70) + randn()*18),20,95);
+    const phy=clamp(Math.round(67 + .35*(ovr-70) + .45*(age-24) + randn()*10),35,95);
+    // Synthetic market value in M€: linear enough for didactic regression,
+    // with correlated football attributes and noise.
+    let value = -61
+      + 0.92*ovr
+      - 0.95*age
+      + 0.11*pac
+      + 0.17*sho
+      + 0.10*pas
+      + 0.16*dri
+      + 0.025*def
+      + 0.06*phy
+      + randn()*4.8;
+    value=clamp(value,1.5,115);
+    rows.push({x:[ovr,age,pac,sho,pas,dri,def,phy], y:value});
+  }
+  // deterministic shuffle
+  for(let i=rows.length-1;i>0;i--){
+    const j=Math.floor(rng()*(i+1)); [rows[i],rows[j]]=[rows[j],rows[i]];
+  }
+  const cut=Math.floor(rows.length*.78);
+  trainX=rows.slice(0,cut).map(r=>r.x);
+  trainY=rows.slice(0,cut).map(r=>r.y);
+  testX=rows.slice(cut).map(r=>r.x);
+  testY=rows.slice(cut).map(r=>r.y);
+}
+
+function fitScaler(X){
+  const p=X[0].length,n=X.length;
+  const mean=Array(p).fill(0), sd=Array(p).fill(0);
+  for(const r of X) for(let j=0;j<p;j++) mean[j]+=r[j]/n;
+  for(const r of X) for(let j=0;j<p;j++) sd[j]+=(r[j]-mean[j])**2/n;
+  for(let j=0;j<p;j++) sd[j]=Math.sqrt(sd[j])||1;
+  return {mean,sd};
+}
+function transform(X,s){
+  return X.map(r=>r.map((v,j)=>(v-s.mean[j])/s.sd[j]));
+}
+function transformOne(r,s){return r.map((v,j)=>(v-s.mean[j])/s.sd[j])}
+function mean(a){return a.reduce((s,v)=>s+v,0)/a.length}
+function dot(a,b){let s=0;for(let i=0;i<a.length;i++)s+=a[i]*b[i];return s}
+
+function solve(A,b){
+  const n=A.length;
+  const M=A.map((r,i)=>r.slice().concat(b[i]));
+  for(let k=0;k<n;k++){
+    let piv=k;
+    for(let i=k+1;i<n;i++) if(Math.abs(M[i][k])>Math.abs(M[piv][k])) piv=i;
+    [M[k],M[piv]]=[M[piv],M[k]];
+    if(Math.abs(M[k][k])<1e-10) M[k][k]=1e-10;
+    const d=M[k][k];
+    for(let j=k;j<=n;j++)M[k][j]/=d;
+    for(let i=0;i<n;i++){
+      if(i===k)continue;
+      const f=M[i][k];
+      for(let j=k;j<=n;j++)M[i][j]-=f*M[k][j];
+    }
+  }
+  return M.map(r=>r[n]);
+}
+
+function ridgeFit(X,y,alpha){
+  const n=X.length,p=X[0].length, ym=mean(y);
+  const yc=y.map(v=>v-ym);
+  const A=Array.from({length:p},()=>Array(p).fill(0));
+  const b=Array(p).fill(0);
+  for(let j=0;j<p;j++){
+    for(let k=0;k<p;k++){
+      let s=0; for(let i=0;i<n;i++) s+=X[i][j]*X[i][k]/n;
+      A[j][k]=s+(j===k?alpha:0);
+    }
+    let s=0;for(let i=0;i<n;i++)s+=X[i][j]*yc[i]/n;
+    b[j]=s;
+  }
+  return {coef:solve(A,b), intercept:ym};
+}
+function soft(z,g){return z>g?z-g:z<-g?z+g:0}
+function lassoFit(X,y,alpha){
+  const n=X.length,p=X[0].length, ym=mean(y);
+  const yc=y.map(v=>v-ym);
+  const beta=Array(p).fill(0);
+  const pred=Array(n).fill(0);
+  for(let iter=0;iter<1200;iter++){
+    let maxchg=0;
+    for(let j=0;j<p;j++){
+      const old=beta[j];
+      let rho=0,z=0;
+      for(let i=0;i<n;i++){
+        const r=yc[i]-(pred[i]-X[i][j]*old);
+        rho+=X[i][j]*r/n;
+        z+=X[i][j]*X[i][j]/n;
+      }
+      const neu=soft(rho,alpha)/(z||1);
+      const d=neu-old;
+      if(d!==0) for(let i=0;i<n;i++) pred[i]+=X[i][j]*d;
+      beta[j]=neu;
+      maxchg=Math.max(maxchg,Math.abs(d));
+    }
+    if(maxchg<1e-7)break;
+  }
+  return {coef:beta,intercept:ym};
+}
+function predict(model,X){return X.map(r=>model.intercept+dot(model.coef,r))}
+function metrics(y,p){
+  const n=y.length, ym=mean(y);
+  let ae=0,se=0,sst=0;
+  for(let i=0;i<n;i++){const e=y[i]-p[i];ae+=Math.abs(e);se+=e*e;sst+=(y[i]-ym)**2}
+  return {mae:ae/n,rmse:Math.sqrt(se/n),r2:1-se/sst};
+}
+function fmt(v,d=2){return Number.isFinite(v)?v.toFixed(d):"—"}
+
+const sliders=document.getElementById("sliders");
+FEATURES.forEach(f=>{
+  const row=document.createElement("div"); row.className="slider-row";
+  row.innerHTML=`<label for="s_${f.key}">${f.label}</label>
+    <input id="s_${f.key}" type="range" min="${f.min}" max="${f.max}" value="${player[f.key]}" step="1">
+    <output id="o_${f.key}">${player[f.key]}</output>`;
+  sliders.appendChild(row);
+  row.querySelector("input").addEventListener("input",e=>{
+    player[f.key]=+e.target.value;
+    row.querySelector("output").textContent=e.target.value;
+    update();
+  });
+});
+
+document.querySelectorAll("[data-preset]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    player={...presets[btn.dataset.preset]};
+    FEATURES.forEach(f=>{
+      document.getElementById("s_"+f.key).value=player[f.key];
+      document.getElementById("o_"+f.key).textContent=player[f.key];
+    });
+    document.querySelectorAll("[data-preset]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    update();
+  });
+});
+document.querySelector('[data-preset="winger"]').classList.add("active");
+
+const alphaEl=document.getElementById("alpha");
+alphaEl.addEventListener("input",()=>{document.getElementById("alphaVal").textContent=(+alphaEl.value).toFixed(2);update()});
+
+function makeBar(label,vals,maxAbs){
+  const colors=["#2468d6","#16885a","#7048b5"];
+  const row=document.createElement("div"); row.className="bar-row";
+  row.innerHTML=`<div class="bar-label">${label}</div><div class="bar-area"><div class="zero-line"></div></div>`;
+  const area=row.querySelector(".bar-area");
+  vals.forEach((v,i)=>{
+    const el=document.createElement("div");
+    const pct=Math.min(49,Math.abs(v)/maxAbs*46);
+    el.className="bar "+(v>=0?"pos":"neg");
+    el.style.width=pct+"%";
+    el.style.background=colors[i];
+    el.style.top=(3+i*7)+"px";
+    el.style.height="6px";
+    el.title=["OLS","Ridge","Lasso"][i]+": "+fmt(v);
+    area.appendChild(el);
+  });
+  return row;
+}
+
+function update(){
+  const alpha=+alphaEl.value;
+  const Xtr=transform(trainX,scaler), Xte=transform(testX,scaler);
+  const ols=ridgeFit(Xtr,trainY,0);
+  const ridge=ridgeFit(Xtr,trainY,alpha);
+  const lasso=lassoFit(Xtr,trainY,alpha);
+
+  const px=transformOne(FEATURES.map(f=>player[f.key]),scaler);
+  const preds=[
+    ols.intercept+dot(ols.coef,px),
+    ridge.intercept+dot(ridge.coef,px),
+    lasso.intercept+dot(lasso.coef,px)
+  ];
+  document.getElementById("predOLS").textContent=fmt(preds[0],1)+" M€";
+  document.getElementById("predRidge").textContent=fmt(preds[1],1)+" M€";
+  document.getElementById("predLasso").textContent=fmt(preds[2],1)+" M€";
+
+  const spread=Math.max(...preds)-Math.min(...preds);
+  document.getElementById("predictionNote").innerHTML =
+    spread<4
+    ? `💡 Hiru predikzioak antzekoak izan daitezke (<strong>${fmt(spread,1)} M€</strong>-ko tartea), baina barruko koefizienteak eta erregularizazioa desberdinak dira.`
+    : `💡 α honekin ereduen arteko predikzio-aldea handitu da (<strong>${fmt(spread,1)} M€</strong>). Begiratu koefizienteei zer gertatu zaien.`;
+
+  const coefBody=document.getElementById("coefBody"); coefBody.innerHTML="";
+  const bars=document.getElementById("bars"); bars.innerHTML="";
+  const maxAbs=Math.max(1,...ols.coef.map(Math.abs),...ridge.coef.map(Math.abs),...lasso.coef.map(Math.abs));
+  FEATURES.forEach((f,j)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${f.label}</td><td>${fmt(ols.coef[j])}</td><td>${fmt(ridge.coef[j])}</td><td class="${Math.abs(lasso.coef[j])<1e-8?"zero":""}">${fmt(lasso.coef[j])}</td>`;
+    coefBody.appendChild(tr);
+    bars.appendChild(makeBar(f.label,[ols.coef[j],ridge.coef[j],lasso.coef[j]],maxAbs));
+  });
+  const zeros=lasso.coef.map((v,j)=>Math.abs(v)<1e-8?FEATURES[j].label:null).filter(Boolean);
+  document.getElementById("lassoNote").innerHTML = zeros.length
+    ? `✂️ α = ${alpha.toFixed(2)}-rekin Lasso-k <strong>${zeros.join(", ")}</strong> koefizientea(k) 0 bihurtu ditu. Horrek ez du esan nahi ezaugarri horiek futbolean “garrantzirik ez” dutenik.`
+    : `✂️ α = ${alpha.toFixed(2)}-rekin Lasso-k oraindik ez du koefizienterik zehazki 0 bihurtu. Handitu α eta ikusi noiz agertzen den sparsity-a.`;
+
+  const models=[ols,ridge,lasso];
+  const names=["OLS","Ridge","Lasso"];
+  const ms=models.map(m=>metrics(testY,predict(m,Xte)));
+  const bestMae=Math.min(...ms.map(m=>m.mae)), bestRmse=Math.min(...ms.map(m=>m.rmse)), bestR2=Math.max(...ms.map(m=>m.r2));
+  const body=document.getElementById("metricBody"); body.innerHTML="";
+  ms.forEach((m,i)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${names[i]}</td>
+      <td class="${m.mae===bestMae?"best":""}">${fmt(m.mae,2)} M€</td>
+      <td class="${m.rmse===bestRmse?"best":""}">${fmt(m.rmse,2)} M€</td>
+      <td class="${m.r2===bestR2?"best":""}">${fmt(m.r2,3)}</td>`;
+    body.appendChild(tr);
+  });
+}
+
+generateDataset();
+scaler=fitScaler(trainX);
+update();
+})();
+</script>
+</body>
+</html>
