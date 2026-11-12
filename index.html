@@ -7,7 +7,7 @@
 :root{--bg:#f5f7fb;--card:#fff;--ink:#10253f;--muted:#66758a;--blue:#1e73d8;--line:#dbe3ec}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,sans-serif;color:var(--ink)}
 main{max-width:1060px;margin:auto;padding:50px 20px}h1{font-size:clamp(36px,6vw,64px);margin:.1em 0;line-height:1}.kicker{font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.06em}
-p{color:var(--muted);line-height:1.55}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:30px}
+h2.section-title{margin:42px 0 4px;font-size:28px}p{color:var(--muted);line-height:1.55}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:18px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;text-decoration:none;color:inherit;display:block}.card:hover{border-color:var(--blue)}
 .tag{display:inline-block;background:#eaf3ff;color:var(--blue);border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900}.arrow{font-size:28px;color:var(--blue)}
 footer{margin-top:42px;color:var(--muted);font-size:13px}
@@ -16,14 +16,25 @@ footer{margin-top:42px;color:var(--muted);font-size:13px}
 <body><main>
 <div class="kicker">BETA · 5072 ML LAB</div>
 <h1>Ikaskuntza Automatikoko Sistemak</h1>
-<p>Machine Learning-eko kontzeptuak <strong>ikusi, manipulatu eta esperimentatzeko</strong> demo interaktiboak. Beta honetan UD4 · Erregresioa lantzeko bost laborategi daude, unitateko progresio berari jarraituz: <strong>eredua → errorea → ikaskuntza → erregularizazioa → aplikazioa eta interpretazioa</strong>.</p>
+<p>Machine Learning eta Deep Learning-eko kontzeptuak <strong>ikusi, manipulatu eta esperimentatzeko</strong> demo interaktiboak. Une honetan UD4 · Erregresioa eta UD5 · Sare neuronalak / Deep Learning lantzeko laborategiak daude.</p>
 
+<h2 class="section-title">UD4 · Erregresioa</h2>
+<p><strong>eredua → errorea → ikaskuntza → erregularizazioa → aplikazioa eta interpretazioa</strong></p>
 <section class="cards">
-<a class="card" href="demos/erregresio-lineala/"><span class="tag">1 · OLS</span><h2>Response Predictor</h2><p>Puntuak mugitu, hondarrak ikusi eta ŷ = b₀ + b₁x zuzen onena nola aldatzen den ulertu.</p><div class="arrow">→</div></a>
-<a class="card" href="demos/metrikak/"><span class="tag">2 · METRIKAK</span><h2>MAE · RMSE · R²</h2><p>Errore berdinak, outlier-ak eta baseline-a manipulatuz hiru metrikek zer neurtzen duten alderatu.</p><div class="arrow">→</div></a>
-<a class="card" href="demos/gradient-descent/"><span class="tag">3 · OPTIMIZAZIOA</span><h2>Gradient Descent</h2><p>Forward → MSE → gradient → update zikloa urratsez urrats ikusi, learning rate-aren efektuarekin.</p><div class="arrow">→</div></a>
-<a class="card" href="demos/ridge-lasso/"><span class="tag">4 · REGULARIZATION</span><h2>Ridge vs Lasso</h2><p>α handitu eta ikusi Ridge-k koefizienteen magnitudea nola kontrolatzen duen eta Lasso-k batzuk nola eraman ditzakeen 0ra.</p><div class="arrow">→</div></a>
-<a class="card" href="demos/ridge-lasso-futbola/"><span class="tag">5 · APLIKAZIOA</span><h2>Ridge vs Lasso · Futbola</h2><p>EA SPORTS FC estiloko feature-ekin, OLS, Ridge eta Lasso alderatu, feature korrelazionatuak aztertu eta modeloak metriketatik bereizi.</p><div class="arrow">→</div></a>
+<a class="card" href="demos/erregresio-lineala/"><span class="tag">UD4 · 1 · OLS</span><h2>Response Predictor</h2><p>Puntuak mugitu, hondarrak ikusi eta ŷ = b₀ + b₁x zuzen onena nola aldatzen den ulertu.</p><div class="arrow">→</div></a>
+<a class="card" href="demos/metrikak/"><span class="tag">UD4 · 2 · METRIKAK</span><h2>MAE · RMSE · R²</h2><p>Errore berdinak, outlier-ak eta baseline-a manipulatuz hiru metrikek zer neurtzen duten alderatu.</p><div class="arrow">→</div></a>
+<a class="card" href="demos/gradient-descent/"><span class="tag">UD4 · 3 · OPTIMIZAZIOA</span><h2>Gradient Descent</h2><p>Forward → MSE → gradient → update zikloa urratsez urrats ikusi, learning rate-aren efektuarekin.</p><div class="arrow">→</div></a>
+<a class="card" href="demos/ridge-lasso/"><span class="tag">UD4 · 4 · ERREGULARIZAZIOA</span><h2>Ridge vs Lasso</h2><p>α handitu eta ikusi Ridge-k koefizienteen magnitudea nola kontrolatzen duen eta Lasso-k batzuk nola eraman ditzakeen 0ra.</p><div class="arrow">→</div></a>
+<a class="card" href="demos/ridge-lasso-futbola/"><span class="tag">UD4 · 5 · APLIKAZIOA</span><h2>Ridge vs Lasso · Futbola</h2><p>EA SPORTS FC estiloko feature-ekin, OLS, Ridge eta Lasso alderatu, feature korrelazionatuak aztertu eta modeloak metriketatik bereizi.</p><div class="arrow">→</div></a>
+</section>
+
+<h2 class="section-title">UD5 · Sare neuronalak eta Deep Learning</h2>
+<p><strong>z = Wx+b → aktibazioa → ez-linealtasuna → entrenamendua → generalizazioa → CNN</strong></p>
+<section class="cards">
+<a class="card" href="demos/activation-lab/"><span class="tag">UD5 · 1 · AKTIBAZIOA</span><h2>Activation Lab</h2><p>Identity, Sigmoid, Tanh eta ReLU alderatu; z → f(z) transformazioa eta Softmax probabilitateak manipulatu.</p><div class="arrow">→</div></a>
+<a class="card" href="demos/xor-playground/"><span class="tag">UD5 · 2 · EZ-LINEALTASUNA</span><h2>XOR Playground</h2><p>Aktibazioa ON/OFF: ikusi zergatik transformazio linealek ez duten XOR konpontzen eta ez-linealtasunak zer aldatzen duen.</p><div class="arrow">→</div></a>
+<a class="card" href="demos/training-doctor/"><span class="tag">UD5 · 3 · GENERALIZAZIOA</span><h2>Training Doctor</h2><p>Underfitting, egokitze ona eta overfitting kurbetan diagnostikatu; Dropout eta Early Stopping esperimentatu.</p><div class="arrow">→</div></a>
+<a class="card" href="demos/cnn-kernel-explorer/"><span class="tag">UD5 · 4 · CNN</span><h2>CNN Kernel Explorer</h2><p>Irudia → kernel 3×3 → feature map → ReLU → MaxPool prozesua pausoz pauso ikusi, weight sharing-arekin.</p><div class="arrow">→</div></a>
 </section>
 <footer>IES Xabier Zubiri-Manteo BHI · 5072 · Beta materialak</footer>
 </main></body></html>

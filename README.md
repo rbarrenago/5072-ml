@@ -50,28 +50,67 @@ Biltegi honen helburua **5072 · Ikaskuntza Automatikoko Sistemak** modulurako s
 - OLS / Ridge / Lasso modeloen predikzioak eta koefizienteak;
 - `α` aldatuz erregularizazioaren efektua;
 - feature korrelazionatuen interpretazioa;
-- Lasso-k koefiziente batzuk 0 bihurtzeko duen gaitasuna;
-- modeloak (OLS / Ridge / Lasso) eta ebaluazio-metrikak (MAE / RMSE / R²) bereiztea.
+- modeloak eta ebaluazio-metrikak bereiztea.
 
 > Oharra: futbol-demoak dataset sintetiko didaktikoa erabiltzen du. Ez dira EA SPORTS FC-ren edo futbol-merkatu errealaren balio ofizialak.
+
+## 🧠 UD5 · Sare neuronalak eta Deep Learning — Demo interaktiboak
+
+### 1. Activation Lab
+`demos/activation-lab/`
+
+- `z = Wx+b → a=f(z)`;
+- Identity, Sigmoid, Tanh eta ReLU;
+- aktibazioaren balioa eta deribatua;
+- Linear Regression / Logistic Regression / neurona lotura;
+- Softmax: logit-ak → probabilitateak → `argmax`.
+
+### 2. XOR Playground
+`demos/xor-playground/`
+
+- XOR linealki banaezina;
+- aktibazioa ON/OFF;
+- geruza ezkutuaren errepresentazio-aldaketa;
+- `geruza + aktibazio ez-lineala` zergatik den funtsezkoa;
+- azken muga lineal batek errepresentazio berrian nola lan egin dezakeen.
+
+### 3. Training Doctor
+`demos/training-doctor/`
+
+- underfitting / egokitze ona / overfitting;
+- train eta validation loss kurbak;
+- validation loss minimoa;
+- Dropout;
+- Early Stopping;
+- Ridge/Lasso-rekin helburu komuna baina mekanismo desberdinak.
+
+### 4. CNN Kernel Explorer
+`demos/cnn-kernel-explorer/`
+
+- pixel-sarrera editagarria;
+- 3×3 kernel desberdinak;
+- feature map;
+- ReLU;
+- MaxPool 2×2;
+- weight sharing;
+- Dense vs Conv2D lehen geruzako parametro kopurua.
 
 ## 📂 Beta egitura
 
 ```text
-5072-ml-beta/
+5072-ml/
 ├── index.html
 ├── README.md
 └── demos/
     ├── erregresio-lineala/
-    │   └── index.html
     ├── metrikak/
-    │   └── index.html
     ├── gradient-descent/
-    │   └── index.html
     ├── ridge-lasso/
-    │   └── index.html
-    └── ridge-lasso-futbola/
-        └── index.html
+    ├── ridge-lasso-futbola/
+    ├── activation-lab/
+    ├── xor-playground/
+    ├── training-doctor/
+    └── cnn-kernel-explorer/
 ```
 
 ## 🌐 GitHub Pages
@@ -85,20 +124,10 @@ Branch: main
 Folder: / (root)
 ```
 
-Adibidez:
+Oinarrizko URLa:
 
 ```text
-https://ZURE-ERABILTZAILEA.github.io/5072-ml/
-```
-
-Demo zuzenak:
-
-```text
-/demos/erregresio-lineala/
-/demos/metrikak/
-/demos/gradient-descent/
-/demos/ridge-lasso/
-/demos/ridge-lasso-futbola/
+https://rbarrenago.github.io/5072-ml/
 ```
 
 ## 🧭 Ikaskuntza-ikuspegia
@@ -117,11 +146,9 @@ interpretatu
 
 Helburua ez da algoritmoak mekanikoki erabiltzea, baizik eta **zer egiten duten, zergatik egiten duten eta noiz erabiltzea komeni den ulertzea**.
 
-## 📌 Egoera
-
-**BETA** — ikastaroa amaitzean notebook-ak, teoriak, irudiak, demo-ak eta ebaluazio-materialak egitura bateratu batean antolatuko dira.
-
 ## 🕒 Noiz erabili demo bakoitza?
+
+### UD4
 
 ```text
 1. Response Predictor         → 1. ariketaren amaieran
@@ -131,16 +158,33 @@ Helburua ez da algoritmoak mekanikoki erabiltzea, baizik eta **zer egiten duten,
 5. Ridge vs Lasso · Futbola   → 4. ariketaren amaieran / Scout AI aurretik
 ```
 
-Demo-en ordenak UD4ko galdera nagusiak jarraitzen ditu:
+### UD5
 
 ```text
-Zein da eredua?
-      ↓
-Nola neurtzen dugu errorea?
-      ↓
-Nola ikasten du?
-      ↓
-Nola kontrolatzen dugu konplexutasuna?
-      ↓
-Nola aplikatzen eta interpretatzen dugu testuinguru batean?
+1. Activation Lab             → S1 aurretik / aktibazio-funtzioak azaltzean
+2. XOR Playground             → S1 notebook-aren aurretik eta bitartean
+3. Training Doctor            → S3 entrenamendua eta erregularizazioa
+4. CNN Kernel Explorer        → S4 notebook-aren aurretik eta bitartean
 ```
+
+UD5eko progresio kontzeptuala:
+
+```text
+z = Wx+b
+   ↓
+a = f(z)
+   ↓
+ez-linealtasuna / XOR
+   ↓
+backprop → gradienteak
+   ↓
+optimizer → pisuak eguneratu
+   ↓
+generalizazioa
+   ↓
+CNN · lokalitatea + weight sharing
+```
+
+## 📌 Egoera
+
+**BETA** — ikastaroa amaitzean notebook-ak, teoriak, irudiak, demo-ak eta ebaluazio-materialak egitura bateratu batean antolatuko dira.
