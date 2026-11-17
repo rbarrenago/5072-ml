@@ -133,7 +133,20 @@ Nola aplikatzen eta interpretatzen dugu testuinguru batean?
 - hierarchical representation;
 - azken neurona batek espazio eraldatuan erabaki lineala hartzea.
 
-### 5. Training Doctor
+### 5. MNIST MLP Lab
+`demos/mnist-mlp-lab/`
+
+- MNIST estiloko 28×28 digitua;
+- `28×28 → 784` flatten transformazioa;
+- `784 → 128 → 64 → 10` MLP arkitektura;
+- Dense + ReLU geruzak;
+- Softmax probabilitateak;
+- `Shuffle pixels` bidez egitura espazialaren galera ikustea;
+- MLP-tik CNN-rako zubi kontzeptuala.
+
+> Oharra: demoak MNIST estiloko lagin sintetikoak eta Softmax simulazio didaktikoa erabiltzen ditu. Helburua mekanismoa bistaratzea da, ez TensorFlow modeloa browserrean entrenatzea.
+
+### 6. Training Doctor
 `demos/training-doctor/`
 
 - train eta validation kurbak;
@@ -143,7 +156,7 @@ Nola aplikatzen eta interpretatzen dugu testuinguru batean?
 - entrenamenduaren diagnostikoa;
 - generalizazioaren intuizioa.
 
-### 6. CNN Kernel Explorer
+### 7. CNN Kernel Explorer
 `demos/cnn-kernel-explorer/`
 
 - kernel / filter baten mugimendua;
@@ -166,6 +179,10 @@ aktibazio ez-linealak
 feature combination
       ↓
 hidden representation
+      ↓
+MLP + irudiak
+      ↓
+flatten eta egitura espazialaren muga
       ↓
 entrenamendua eta generalizazioa
       ↓
@@ -200,6 +217,8 @@ CNN eta arkitektura espezializatuak
     │   └── index.html
     ├── feature-combination-lab/
     │   └── index.html
+    ├── mnist-mlp-lab/
+    │   └── index.html
     ├── training-doctor/
     │   └── index.html
     └── cnn-kernel-explorer/
@@ -229,6 +248,7 @@ https://rbarrenago.github.io/5072-ml/demos/xor-playground/
 https://rbarrenago.github.io/5072-ml/demos/logistic-vs-neural/
 https://rbarrenago.github.io/5072-ml/demos/activation-lab/
 https://rbarrenago.github.io/5072-ml/demos/feature-combination-lab/
+https://rbarrenago.github.io/5072-ml/demos/mnist-mlp-lab/
 https://rbarrenago.github.io/5072-ml/demos/training-doctor/
 https://rbarrenago.github.io/5072-ml/demos/cnn-kernel-explorer/
 ```
@@ -263,8 +283,9 @@ Folder: / (root)
 2. Logistic Regression vs Neural Network → LR-tik MLP-rako zubia
 3. Activation Lab                         → ez-linealtasuna
 4. Feature Combination Lab                → feature learning eta hidden representation
-5. Training Doctor                        → entrenamendua eta generalizazioa
-6. CNN Kernel Explorer                    → CNN-en sarrera
+5. MNIST MLP Lab                          → MLP + irudiak; flatten eta CNN-rako zubia
+6. Training Doctor                        → entrenamendua eta generalizazioa
+7. CNN Kernel Explorer                    → CNN-en sarrera
 ```
 
 ---
