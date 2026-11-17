@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="eu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UD5 · MNIST MLP Lab</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--ink:#10253f;--muted:#64748b;--line:#dbe3ec;--blue:#1e73d8;--blue2:#eaf3ff}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Inter,system-ui,sans-serif;color:var(--ink)}
+main{max-width:1180px;margin:auto;padding:34px 18px 54px}.kicker{font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+h1{font-size:clamp(34px,5vw,58px);line-height:1.02;margin:8px 0 12px}h2{margin:0 0 10px;font-size:24px}h3{margin:0 0 8px;font-size:18px}
+p{color:var(--muted);line-height:1.55}.grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 8px 30px rgba(16,37,63,.04)}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
+button{border:1px solid var(--line);background:#fff;color:var(--ink);padding:10px 12px;border-radius:12px;font-weight:800;cursor:pointer}
+button:hover{border-color:var(--blue)}button.active,button.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+button.warn{background:#fff7ed;border-color:#fed7aa;color:#9a3412}.canvasWrap{display:flex;justify-content:center}
+canvas#digit{width:min(360px,90vw);height:min(360px,90vw);image-rendering:pixelated;border-radius:18px;background:#000;border:10px solid #0b1220}
+.vector{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0f172a;color:#dbeafe;border-radius:16px;padding:14px;line-height:1.6;min-height:170px;overflow-wrap:anywhere}
+.vector .dim{color:#93c5fd;font-weight:900}.note{background:#f8fafc;border-left:4px solid var(--blue);padding:12px 14px;border-radius:12px;margin-top:14px}
+.arch{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.layer{border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center}
+.layer strong{display:block;font-size:22px;margin:4px 0}.layer small{color:var(--muted)}.layer.input{background:#f8fafc}.layer.hidden{background:#eef6ff}.layer.output{background:#f0fdf4}
+.params{margin-top:12px;font-size:14px;color:var(--muted)}.barRow{display:grid;grid-template-columns:22px 1fr 54px;gap:8px;align-items:center;margin:7px 0}
+.bar{height:14px;background:#e5e7eb;border-radius:999px;overflow:hidden}.fill{height:100%;background:var(--blue);border-radius:999px;transition:width .35s ease}
+.predBox{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}.predBig{font-size:44px;font-weight:950;color:var(--blue)}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:var(--blue2);color:var(--blue);font-weight:900;font-size:12px}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}.flow span{background:#f8fafc;border:1px solid var(--line);border-radius:999px;padding:7px 10px;font-weight:800;font-size:13px}
+.question{margin-top:18px;background:#fff7ed;border:1px solid #fed7aa;border-radius:18px;padding:16px}.question h3{color:#9a3412}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.compare .mini{border:1px solid var(--line);border-radius:16px;padding:14px}
+.compare ul{margin:8px 0 0;padding-left:18px;color:var(--muted);line-height:1.55}.footer{margin-top:18px;color:var(--muted);font-size:13px}.legend{font-size:13px;color:var(--muted);margin-top:8px}
+@media(max-width:860px){.grid{grid-template-columns:1fr}.arch{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.compare,.arch{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="kicker">UD5 · Sare neuronalak eta Deep Learning</div>
+  <h1>MNIST MLP Lab</h1>
+  <p><strong>Pixels → Flatten → Dense → Softmax</strong>. Ikusi nola MLP batek 28×28 irudi bat 784 dimentsioko bektore bihurtzen duen, eta zergatik den hori CNN-etarako zubi naturala.</p>
+</header>
+
+<div class="grid">
+<section class="card">
+  <h2>1 · 28×28 irudia</h2>
+  <p>Aukeratu digitu bat. Demoak MNIST estiloko lagin sintetikoak erabiltzen ditu mekanismoa modu bisualean azaltzeko.</p>
+  <div class="controls" id="digits"></div>
+  <div class="canvasWrap"><canvas id="digit" width="280" height="280"></canvas></div>
+  <div class="controls">
+    <button class="primary" id="flattenBtn">→ FLATTEN</button>
+    <button class="warn" id="shuffleBtn">🔀 Shuffle pixels</button>
+    <button id="resetBtn">↺ Reset</button>
+  </div>
+  <div class="note"><strong>MNIST:</strong> 28×28 = <strong>784 pixel</strong>. Pixel-balioak normalean [0,255] → [0,1] normalizatzen dira.</div>
+</section>
+
+<section class="card">
+  <h2>2 · Flatten → 784 features</h2>
+  <p>MLP-ak irudia bektore lau bihurtzen du. Hemen lehen 48 balioak bakarrik erakusten dira.</p>
+  <div class="vector" id="vector"><span class="dim">shape = (28, 28)</span><br>Sakatu <strong>FLATTEN</strong>.</div>
+  <div class="flow"><span>28×28</span><b>→</b><span>Flatten</span><b>→</b><span>784</span><b>→</b><span>Dense</span></div>
+  <div class="question"><h3>🤔 Zer galdu dugu?</h3><p>784 balioak mantentzen ditugu, baina MLP dentsuak ez du irudiaren <strong>egitura espaziala</strong> berez aprobetxatzen: zein pixel dagoen zeinen ondoan ikasi behar du pisuen bidez.</p></div>
+</section>
+
+<section class="card">
+  <h2>3 · MLP arkitektura</h2>
+  <p>Laneki-ko oinarrizko arkitektura bera:</p>
+  <div class="arch">
+    <div class="layer input"><small>Input</small><strong>784</strong><small>pixel / feature</small></div>
+    <div class="layer hidden"><small>Dense + ReLU</small><strong>128</strong><small>hidden neurons</small></div>
+    <div class="layer hidden"><small>Dense + ReLU</small><strong>64</strong><small>hidden neurons</small></div>
+    <div class="layer output"><small>Softmax</small><strong>10</strong><small>0…9 klaseak</small></div>
+  </div>
+  <div class="params">Parametroak: <strong>100,480</strong> + <strong>8,256</strong> + <strong>650</strong> = <strong>109,386</strong>.</div>
+  <div class="note"><strong>Gakoa:</strong> MLP honek irudia sailka dezake, baina lehenengo 28×28 egitura <em>flatten</em> egiten du.</div>
+</section>
+
+<section class="card">
+  <div class="predBox"><div><h2>4 · Softmax irteera</h2><span class="badge">SIMULAZIO DIDAKTIKOA</span></div><div class="predBig" id="predBig">—</div></div>
+  <p>10 output neuron → 10 probabilitate. Probabilitate handiena duen klasea aukeratzen da.</p>
+  <div id="bars"></div>
+  <div class="legend" id="predNote"></div>
+</section>
+</div>
+
+<section class="card" style="margin-top:18px">
+  <h2>5 · MLP → CNN zubia</h2>
+  <p>MLP-ak emaitza ona lor dezake MNIST bezalako problema sinple batean. Baina irudiek egitura espaziala dute, eta horixe da CNN-ek zuzenean aprobetxatzen dutena.</p>
+  <div class="compare">
+    <div class="mini"><h3>MLP</h3><ul><li>28×28 → 784 <strong>flatten</strong></li><li>Fully connected konexio asko</li><li>Pixel-posizioen erlazioak pisuen bidez ikasi behar ditu</li></ul></div>
+    <div class="mini"><h3>CNN</h3><ul><li>28×28 egitura mantendu</li><li>Kernel lokalak + weight sharing</li><li>Ertzak, formak eta patroi espazialak modu naturalagoan ikasi</li></ul></div>
+  </div>
+  <div class="note"><strong>Hurrengo galdera:</strong> nola prozesatu dezakegu irudia <em>flatten</em> egin gabe? → <strong>CNN Kernel Explorer</strong>.</div>
+</section>
+
+<div class="footer">5072 ML Lab · IES Xabier Zubiri-Manteo BHI · Demo didaktikoa</div>
+</main>
+
+<script>
+const canvas=document.getElementById('digit'),ctx=canvas.getContext('2d');
+const digitsBox=document.getElementById('digits'),vectorBox=document.getElementById('vector'),barsBox=document.getElementById('bars');
+const predBig=document.getElementById('predBig'),predNote=document.getElementById('predNote');
+let selected=7,flattened=false,shuffled=false,pixels=[],originalPixels=[];
+
+function drawTemplateDigit(d){
+  const c=document.createElement('canvas');c.width=28;c.height=28;
+  const x=c.getContext('2d');x.fillStyle='#000';x.fillRect(0,0,28,28);x.strokeStyle='#fff';x.lineWidth=3.2;x.lineCap='round';x.lineJoin='round';
+  const s=f=>{x.beginPath();f();x.stroke();};
+  if(d===0)s(()=>x.ellipse(14,14,7,10,0,0,Math.PI*2));
+  if(d===1){s(()=>{x.moveTo(10,9);x.lineTo(14,5);x.lineTo(14,23)});s(()=>{x.moveTo(10,23);x.lineTo(19,23)})}
+  if(d===2)s(()=>{x.moveTo(8,9);x.quadraticCurveTo(13,4,19,8);x.quadraticCurveTo(22,12,17,15);x.lineTo(8,23);x.lineTo(21,23)});
+  if(d===3)s(()=>{x.moveTo(8,7);x.quadraticCurveTo(16,3,20,8);x.quadraticCurveTo(22,12,15,14);x.quadraticCurveTo(22,15,20,20);x.quadraticCurveTo(16,25,8,21)});
+  if(d===4)s(()=>{x.moveTo(18,23);x.lineTo(18,5);x.lineTo(7,17);x.lineTo(22,17)});
+  if(d===5)s(()=>{x.moveTo(20,6);x.lineTo(9,6);x.lineTo(8,14);x.quadraticCurveTo(18,11,21,17);x.quadraticCurveTo(22,24,10,23)});
+  if(d===6)s(()=>{x.moveTo(20,7);x.quadraticCurveTo(10,4,8,15);x.quadraticCurveTo(8,24,16,24);x.quadraticCurveTo(23,23,21,16);x.quadraticCurveTo(18,11,9,15)});
+  if(d===7)s(()=>{x.moveTo(7,6);x.lineTo(22,6);x.lineTo(12,24)});
+  if(d===8){s(()=>x.ellipse(14,9.5,6,5,0,0,Math.PI*2));s(()=>x.ellipse(14,18.5,7,6,0,0,Math.PI*2))}
+  if(d===9){s(()=>x.ellipse(14,10,6,6,0,0,Math.PI*2));s(()=>{x.moveTo(20,9);x.quadraticCurveTo(20,21,10,23)})}
+  const out=document.createElement('canvas');out.width=28;out.height=28;const o=out.getContext('2d');o.filter='blur(.45px)';o.drawImage(c,0,0);
+  return o.getImageData(0,0,28,28).data;
+}
+function toPixels(d){const data=drawTemplateDigit(d),a=[];for(let i=0;i<data.length;i+=4)a.push(data[i]/255);return a}
+function renderPixels(a){
+  const img=ctx.createImageData(28,28);
+  for(let i=0;i<a.length;i++){const v=Math.max(0,Math.min(255,Math.round(a[i]*255)));img.data[i*4]=v;img.data[i*4+1]=v;img.data[i*4+2]=v;img.data[i*4+3]=255}
+  const off=document.createElement('canvas');off.width=28;off.height=28;off.getContext('2d').putImageData(img,0,0);
+  ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,280,280);ctx.drawImage(off,0,0,280,280);
+  ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=.4;
+  for(let i=0;i<=28;i++){ctx.beginPath();ctx.moveTo(i*10,0);ctx.lineTo(i*10,280);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i*10);ctx.lineTo(280,i*10);ctx.stroke()}
+}
+function noise(seed,i){const z=Math.sin((seed+1)*999+i*12.9898)*43758.5453;return z-Math.floor(z)}
+function probabilities(label,bad){
+  let p=Array(10).fill(0).map((_,i)=>0.01+noise(label,i)*.035);
+  if(!bad){p[label]=.82+noise(label,99)*.10;const c={0:[6,8],1:[7],2:[3,7],3:[5,8],4:[9],5:[3,6],6:[0,5],7:[1,9],8:[3,9],9:[4,7]};(c[label]||[]).forEach((j,k)=>p[j]+=.025/(k+1))}
+  else{const w=(label+3)%10;p[w]=.24+noise(label,77)*.12;p[label]=.10+noise(label,66)*.08;for(let i=0;i<10;i++)p[i]+=.035+noise(label+20,i)*.035}
+  const s=p.reduce((a,b)=>a+b,0);return p.map(v=>v/s)
+}
+function renderBars(){
+  const p=probabilities(selected,shuffled);let m=0;p.forEach((v,i)=>{if(v>p[m])m=i});predBig.textContent=m;barsBox.innerHTML='';
+  p.forEach((v,i)=>{const r=document.createElement('div');r.className='barRow';r.innerHTML=`<strong>${i}</strong><div class="bar"><div class="fill" style="width:${(v*100).toFixed(1)}%"></div></div><span>${(v*100).toFixed(1)}%</span>`;barsBox.appendChild(r)});
+  predNote.textContent=shuffled?'Shuffle ondoren egitura bisuala hautsi da: iragarpena askoz ziurgabeagoa da (simulazio didaktikoa).':`Sareak ${selected} digitua ezagutzen du probabilitate handienarekin (simulazio didaktikoa).`
+}
+function renderVector(){
+  if(!flattened){vectorBox.innerHTML='<span class="dim">shape = (28, 28)</span><br>Sakatu <strong>FLATTEN</strong> irudia 784 balioetako bektore bihurtzeko.';return}
+  const vals=pixels.slice(0,48).map(v=>v.toFixed(2));vectorBox.innerHTML=`<span class="dim">shape = (784,)</span><br>[${vals.join(', ')}, …]<br><br><strong>784 features</strong> · pixel bakoitza zenbaki bat`
+}
+function renderButtons(){digitsBox.innerHTML='';for(let d=0;d<10;d++){const b=document.createElement('button');b.textContent=d;if(d===selected)b.classList.add('active');b.onclick=()=>setDigit(d);digitsBox.appendChild(b)}}
+function setDigit(d){selected=d;flattened=false;shuffled=false;originalPixels=toPixels(d);pixels=[...originalPixels];renderPixels(pixels);renderVector();renderBars();renderButtons()}
+document.getElementById('flattenBtn').onclick=()=>{flattened=true;renderVector()};
+document.getElementById('shuffleBtn').onclick=()=>{shuffled=true;flattened=true;pixels=[...originalPixels];for(let i=pixels.length-1;i>0;i--){const j=Math.floor(noise(selected+17,i)*(i+1));[pixels[i],pixels[j]]=[pixels[j],pixels[i]]}renderPixels(pixels);renderVector();renderBars()};
+document.getElementById('resetBtn').onclick=()=>setDigit(selected);
+setDigit(7);
+</script>
+</body>
+</html>
