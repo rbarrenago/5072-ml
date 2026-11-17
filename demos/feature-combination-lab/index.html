@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="eu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>5072 ML Lab · Feature Combination Lab</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--ink:#10253f;--muted:#66758a;--blue:#1e73d8;--blue2:#eaf3ff;--red:#d94b5b;--green:#159570;--amber:#d98a12;--purple:#6e5bd7;--line:#dbe3ec;--shadow:0 16px 40px rgba(16,37,63,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink)}main{max-width:1260px;margin:auto;padding:38px 18px 60px}.kicker{font-weight:900;color:var(--purple);text-transform:uppercase;letter-spacing:.07em;font-size:13px}h1{font-size:clamp(34px,5vw,58px);line-height:1.03;margin:.12em 0 .18em}h2{margin:.1em 0 .4em;font-size:22px}p{color:var(--muted);line-height:1.55}.lead{max-width:960px;font-size:17px}.controls{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:20px 0}.control{background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px}.control label{font-size:11px;font-weight:900;color:var(--muted);display:block;margin-bottom:5px;text-transform:uppercase}.control select,.control input,.control button{width:100%}.control select,.control button{border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);padding:9px;font-weight:800}.control button{background:var(--purple);color:#fff;cursor:pointer}.control input[type=range]{accent-color:var(--purple)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow);min-width:0}.span2{grid-column:1/-1}.tag{display:inline-block;background:#f0edff;color:var(--purple);border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900}.mini{font-size:12px;color:var(--muted)}.canvasWrap{position:relative;width:100%;aspect-ratio:1.3;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}.canvasWrap.square{aspect-ratio:1}.canvasWrap canvas{width:100%;height:100%;display:block}.metricrow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}.metric{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fbfcfe}.metric b{display:block;font-size:23px}.detectors{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.detector{border:1px solid var(--line);border-radius:14px;padding:8px;background:#fbfcfe}.detector canvas{width:100%;aspect-ratio:1;display:block;border-radius:10px}.detector b{font-size:12px}.network{width:100%;min-height:300px}.pathbox{background:#f6f9fc;border:1px solid var(--line);border-radius:16px;padding:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.55;overflow:auto}.message{padding:16px 18px;border-radius:18px;background:#f2f9ff;border:1px solid #cfe3f7}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.step{padding:13px;border-radius:16px;background:#fbfcfe;border:1px solid var(--line)}.step b{color:var(--purple)}.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px}footer{margin-top:34px;color:var(--muted);font-size:13px}@media(max-width:980px){.controls{grid-template-columns:1fr 1fr 1fr}.detectors{grid-template-columns:1fr 1fr}.metricrow,.steps{grid-template-columns:1fr 1fr}}@media(max-width:700px){.grid{grid-template-columns:1fr}.span2{grid-column:auto}.controls{grid-template-columns:1fr 1fr}.network{min-height:360px}}
+</style>
+</head>
+<body><main>
+<div class="kicker">UD5 · 5072 ML LAB · DEMO</div>
+<h1>Feature Combination Lab</h1>
+<p class="lead">Arazo ez-lineal batean, sareak ez ditu feature originalak soilik erabiltzen: <strong>neurona bakoitzak x₁ eta x₂-ren konbinazio desberdin bat ikasten du</strong>, eta hurrengo geruzak konbinazio horien gainean beste representazio bat eraikitzen du. Hori da <strong>hierarchical representation</strong>.</p>
+
+<div class="controls">
+  <div class="control"><label>Dataset-a</label><select id="dataset"><option value="moons">Two Moons</option><option value="circles">Circles</option><option value="xor">XOR</option></select></div>
+  <div class="control"><label>1. hidden layer</label><input id="h1size" type="range" min="2" max="6" value="4"><div class="mini"><span id="h1val">4</span> neurona</div></div>
+  <div class="control"><label>Aktibazioa</label><select id="activation"><option value="tanh">tanh</option><option value="relu">ReLU</option></select></div>
+  <div class="control"><label>Entrenamendua</label><input id="epochs" type="range" min="300" max="1800" step="300" value="1200"><div class="mini"><span id="epochVal">1200</span> epoch</div></div>
+  <div class="control"><label>Ekintza</label><button id="trainBtn">Entrenatu berriro</button></div>
+</div>
+
+<section class="grid">
+  <article class="card">
+    <span class="tag">1 · ESPAZIO ORIGINALA</span><h2>x₁, x₂ → erabaki-muga</h2>
+    <p class="mini">Koloreko hondoa sarearen probabilitatea da. Egin klik puntu batean eta jarraitu geruzaz geruza.</p>
+    <div class="canvasWrap"><canvas id="inputCanvas"></canvas></div>
+    <div class="legend"><span><i class="dot" style="background:#1e73d8"></i>Klasea 0</span><span><i class="dot" style="background:#d94b5b"></i>Klasea 1</span><span>○ hautatutako puntua</span></div>
+    <div class="metricrow">
+      <div class="metric"><span class="mini">Accuracy</span><b id="acc">–</b></div>
+      <div class="metric"><span class="mini">Loss</span><b id="loss">–</b></div>
+      <div class="metric"><span class="mini">h₁</span><b id="h1metric">4</b></div>
+      <div class="metric"><span class="mini">h₂</span><b>2</b></div>
+    </div>
+  </article>
+
+  <article class="card">
+    <span class="tag">2 · FEATURE COMBINATION</span><h2>1. geruzako neuronek zer “ikusten” dute?</h2>
+    <p class="mini">Mini-mapek hidden neurona bakoitzaren aktibazioa erakusten dute. Neurona bakoitzak x₁ eta x₂-ren konbinazio desberdin bati erantzuten dio.</p>
+    <div class="detectors" id="detectors"></div>
+  </article>
+
+  <article class="card">
+    <span class="tag">3 · REPRESENTAZIO BERRIA</span><h2>h₂ espazioa: arazoa errazago bihurtzen da</h2>
+    <p class="mini">Bigarren hidden layer-ak bi balio sortzen ditu: h₂₁ eta h₂₂. Irteera-neuronak espazio honetan <strong>muga lineal</strong> bat besterik ez du behar.</p>
+    <div class="canvasWrap square"><canvas id="hiddenCanvas"></canvas></div>
+  </article>
+
+  <article class="card">
+    <span class="tag">4 · HIERARCHICAL REPRESENTATION</span><h2>Geruzaz geruza</h2>
+    <svg class="network" id="networkSvg" viewBox="0 0 650 330"></svg>
+    <div class="pathbox" id="pathBox"></div>
+  </article>
+
+  <article class="card span2">
+    <span class="tag">GAKO-MEZUA</span><h2>Feature learning = konbinatu → eraldatu → berriro konbinatu</h2>
+    <div class="steps">
+      <div class="step"><b>1.</b><br>Input: <strong>x₁, x₂</strong></div>
+      <div class="step"><b>2.</b><br>Hidden 1: <strong>feature konbinazioak</strong></div>
+      <div class="step"><b>3.</b><br>Hidden 2: <strong>representazio berria</strong></div>
+      <div class="step"><b>4.</b><br>Output: <strong>banaketa sinpleagoa</strong></div>
+    </div>
+    <div class="message" style="margin-top:12px"><strong>Probatu:</strong> aldatu dataset-a, neurona kopurua edo aktibazio-funtzioa. Begiratu nola aldatzen diren lehen geruzako “detektagailuak”, h₂ espazioa eta azken erabaki-muga. Sarearen indarra ez dago neurona bakar batean, <strong>geruzen arteko representazio-katean</strong> baizik.</div>
+  </article>
+</section>
+<footer>IES Xabier Zubiri-Manteo BHI · 5072 · Ikaskuntza Automatikoko Sistemak · Dataset sintetikoak · Kanpoko liburutegirik gabe</footer>
+
+<script>
+'use strict';
+const $=s=>document.querySelector(s);const sigmoid=x=>1/(1+Math.exp(-Math.max(-30,Math.min(30,x))));
+function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+function makeRand(seed){const r=mulberry32(seed);function n(){let u=0,v=0;while(!u)u=r();while(!v)v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}return{r,n}}
+let points=[],net=null,selected=0;
+function dataset(kind){const {r,n}=makeRand(kind==='moons'?5072:kind==='circles'?5073:5074);const a=[];
+  if(kind==='moons'){
+    for(let i=0;i<100;i++){let t=Math.PI*r();a.push({x:-.15+Math.cos(t)+.08*n(),y:.25+Math.sin(t)+.08*n(),c:0});t=Math.PI*r();a.push({x:.55+Math.cos(t)+.08*n(),y:-.25-Math.sin(t)+.08*n(),c:1})}
+  }else if(kind==='circles'){
+    for(let i=0;i<200;i++){const c=i<100?0:1,rad=c?.95:.48,t=2*Math.PI*r();a.push({x:rad*Math.cos(t)+.06*n(),y:rad*Math.sin(t)+.06*n(),c})}
+  }else{
+    for(let i=0;i<220;i++){let x=2.3*r()-1.15,y=2.3*r()-1.15,c=(x*y>0)?0:1;x+=.05*n();y+=.05*n();a.push({x,y,c})}
+  }return a;
+}
+const act=(z,type)=>type==='relu'?Math.max(0,z):Math.tanh(z);const dact=(z,a,type)=>type==='relu'?(z>0?1:0):(1-a*a);
+function initNet(h1){const {r}=makeRand(99+h1);return{h1,h2:2,W1:Array.from({length:h1},()=>[(r()-.5)*1.3,(r()-.5)*1.3]),b1:Array(h1).fill(0),W2:Array.from({length:2},()=>Array.from({length:h1},()=> (r()-.5)*1.0)),b2:[0,0],W3:[(r()-.5)*1.0,(r()-.5)*1.0],b3:0}}
+function forward(p,n=net){const type=$('#activation').value;const z1=n.W1.map((w,k)=>w[0]*p.x+w[1]*p.y+n.b1[k]);const h1=z1.map(z=>act(z,type));const z2=n.W2.map((w,k)=>w.reduce((s,v,j)=>s+v*h1[j],n.b2[k]));const h2=z2.map(z=>act(z,type));const z3=n.W3[0]*h2[0]+n.W3[1]*h2[1]+n.b3;return{z1,h1,z2,h2,p:sigmoid(z3)}}
+function train(){const h1=+$ ('#h1size').value,epochs=+$ ('#epochs').value,type=$('#activation').value;net=initNet(h1);let lr=type==='relu'?.018:.035;
+  for(let e=0;e<epochs;e++){
+    const dW1=Array.from({length:h1},()=>[0,0]),db1=Array(h1).fill(0),dW2=Array.from({length:2},()=>Array(h1).fill(0)),db2=[0,0],dW3=[0,0];let db3=0;
+    for(const pt of points){const f=forward(pt);const dz3=f.p-pt.c;dW3[0]+=dz3*f.h2[0];dW3[1]+=dz3*f.h2[1];db3+=dz3;
+      const dh2=[dz3*net.W3[0],dz3*net.W3[1]],dz2=[dh2[0]*dact(f.z2[0],f.h2[0],type),dh2[1]*dact(f.z2[1],f.h2[1],type)];
+      for(let k=0;k<2;k++){db2[k]+=dz2[k];for(let j=0;j<h1;j++)dW2[k][j]+=dz2[k]*f.h1[j]}
+      for(let j=0;j<h1;j++){let dh=0;for(let k=0;k<2;k++)dh+=dz2[k]*net.W2[k][j];const dz1=dh*dact(f.z1[j],f.h1[j],type);db1[j]+=dz1;dW1[j][0]+=dz1*pt.x;dW1[j][1]+=dz1*pt.y}
+    }
+    const n=points.length;for(let j=0;j<h1;j++){net.b1[j]-=lr*db1[j]/n;net.W1[j][0]-=lr*dW1[j][0]/n;net.W1[j][1]-=lr*dW1[j][1]/n}for(let k=0;k<2;k++){net.b2[k]-=lr*db2[k]/n;for(let j=0;j<h1;j++)net.W2[k][j]-=lr*dW2[k][j]/n}net.W3[0]-=lr*dW3[0]/n;net.W3[1]-=lr*dW3[1]/n;net.b3-=lr*db3/n;
+    if(type==='relu'&&e===Math.floor(epochs*.45))lr*=.6;
+  }render();
+}
+function setupCanvas(c){const dpr=window.devicePixelRatio||1,r=c.getBoundingClientRect();c.width=Math.round(r.width*dpr);c.height=Math.round(r.height*dpr);const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);return{ctx,w:r.width,h:r.height}}
+function bounds(){let xs=points.map(p=>p.x),ys=points.map(p=>p.y);return{xmin:Math.min(...xs)-.25,xmax:Math.max(...xs)+.25,ymin:Math.min(...ys)-.25,ymax:Math.max(...ys)+.25}}
+function toPix(p,b,w,h,pad=25){return{x:pad+(p.x-b.xmin)/(b.xmax-b.xmin)*(w-2*pad),y:h-pad-(p.y-b.ymin)/(b.ymax-b.ymin)*(h-2*pad)}}
+function drawInput(){const c=$('#inputCanvas'),{ctx,w,h}=setupCanvas(c),b=bounds(),pad=25;ctx.clearRect(0,0,w,h);const nx=46,ny=36;for(let ix=0;ix<nx;ix++)for(let iy=0;iy<ny;iy++){const x=b.xmin+(ix+.5)/nx*(b.xmax-b.xmin),y=b.ymin+(iy+.5)/ny*(b.ymax-b.ymin),p=forward({x,y}).p;ctx.fillStyle=`rgba(${Math.round(217*p+30*(1-p))},${Math.round(75*p+115*(1-p))},${Math.round(91*p+216*(1-p))},.15)`;ctx.fillRect(pad+ix*(w-2*pad)/nx,pad+iy*(h-2*pad)/ny,(w-2*pad)/nx+1,(h-2*pad)/ny+1)}ctx.strokeStyle='#cbd6e2';ctx.strokeRect(pad,pad,w-2*pad,h-2*pad);
+  points.forEach((pt,i)=>{const q=toPix(pt,b,w,h,pad);ctx.beginPath();ctx.arc(q.x,q.y,i===selected?6:3.2,0,2*Math.PI);ctx.fillStyle=pt.c?'#d94b5b':'#1e73d8';ctx.fill();if(i===selected){ctx.strokeStyle='#10253f';ctx.lineWidth=2;ctx.stroke()}})}
+$('#inputCanvas').addEventListener('click',e=>{const c=e.currentTarget,r=c.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,b=bounds();let best=Infinity,bi=0;points.forEach((pt,i)=>{const q=toPix(pt,b,r.width,r.height,25),d=(q.x-mx)**2+(q.y-my)**2;if(d<best){best=d;bi=i}});selected=bi;renderNetwork();drawInput();drawHidden()});
+function drawDetectors(){const wrap=$('#detectors');wrap.innerHTML='';const b=bounds();for(let k=0;k<net.h1;k++){const box=document.createElement('div');box.className='detector';box.innerHTML=`<b>h₁${k+1}</b><canvas></canvas>`;wrap.appendChild(box);const c=box.querySelector('canvas'),{ctx,w,h}=setupCanvas(c);const nx=28,ny=28;let vals=[];for(let ix=0;ix<nx;ix++)for(let iy=0;iy<ny;iy++){const x=b.xmin+(ix+.5)/nx*(b.xmax-b.xmin),y=b.ymin+(iy+.5)/ny*(b.ymax-b.ymin);vals.push(forward({x,y}).h1[k])}const max=Math.max(1e-6,...vals.map(v=>Math.abs(v)));let m=0;for(let ix=0;ix<nx;ix++)for(let iy=0;iy<ny;iy++){const v=vals[m++]/max,t=Math.max(-1,Math.min(1,v));ctx.fillStyle=t>=0?`rgba(110,91,215,${.08+.72*t})`:`rgba(21,149,112,${.08+.72*(-t)})`;ctx.fillRect(ix*w/nx,iy*h/ny,w/nx+1,h/ny+1)}}}
+function drawHidden(){const c=$('#hiddenCanvas'),{ctx,w,h}=setupCanvas(c);const fs=points.map(p=>forward(p)),xs=fs.map(f=>f.h2[0]),ys=fs.map(f=>f.h2[1]);let xmin=Math.min(...xs)-.2,xmax=Math.max(...xs)+.2,ymin=Math.min(...ys)-.2,ymax=Math.max(...ys)+.2;if(xmax-xmin<.5){xmin-=.3;xmax+=.3}if(ymax-ymin<.5){ymin-=.3;ymax+=.3}const b={xmin,xmax,ymin,ymax},pad=28;ctx.clearRect(0,0,w,h);ctx.strokeStyle='#cbd6e2';ctx.strokeRect(pad,pad,w-2*pad,h-2*pad);
+  // final output boundary: W3[0] h21 + W3[1] h22 + b3 = 0
+  if(Math.abs(net.W3[1])>.0001){const yA=-(net.W3[0]*xmin+net.b3)/net.W3[1],yB=-(net.W3[0]*xmax+net.b3)/net.W3[1];const A=toPix({x:xmin,y:yA},b,w,h,pad),B=toPix({x:xmax,y:yB},b,w,h,pad);ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.strokeStyle='#159570';ctx.lineWidth=2;ctx.stroke()}
+  points.forEach((pt,i)=>{const q=toPix({x:fs[i].h2[0],y:fs[i].h2[1]},b,w,h,pad);ctx.beginPath();ctx.arc(q.x,q.y,i===selected?6:3.4,0,Math.PI*2);ctx.fillStyle=pt.c?'#d94b5b':'#1e73d8';ctx.fill();if(i===selected){ctx.strokeStyle='#10253f';ctx.lineWidth=2;ctx.stroke()}});ctx.fillStyle='#66758a';ctx.font='11px system-ui';ctx.fillText('h₂₁ →',w-62,h-8);ctx.save();ctx.translate(10,55);ctx.rotate(-Math.PI/2);ctx.fillText('h₂₂ →',0,0);ctx.restore()}
+function svgNode(svg,x,y,r,label,val,fill){const ns='http://www.w3.org/2000/svg';const g=document.createElementNS(ns,'g'),c=document.createElementNS(ns,'circle'),t=document.createElementNS(ns,'text'),v=document.createElementNS(ns,'text');c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',r);c.setAttribute('fill',fill);c.setAttribute('stroke','#9eb0c4');c.setAttribute('stroke-width','2');t.setAttribute('x',x);t.setAttribute('y',y-3);t.setAttribute('text-anchor','middle');t.setAttribute('font-size','12');t.setAttribute('font-weight','800');t.textContent=label;v.setAttribute('x',x);v.setAttribute('y',y+14);v.setAttribute('text-anchor','middle');v.setAttribute('font-size','10');v.setAttribute('fill','#66758a');v.textContent=val;g.append(c,t,v);svg.appendChild(g)}
+function svgLine(svg,x1,y1,x2,y2,wgt){const ns='http://www.w3.org/2000/svg',l=document.createElementNS(ns,'line');l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',x2);l.setAttribute('y2',y2);l.setAttribute('stroke',wgt>=0?'#6e5bd7':'#159570');l.setAttribute('stroke-opacity',.18+Math.min(.55,Math.abs(wgt)*.22));l.setAttribute('stroke-width',1+Math.min(2.5,Math.abs(wgt)*.6));svg.insertBefore(l,svg.firstChild)}
+function renderNetwork(){const svg=$('#networkSvg');svg.innerHTML='';const pt=points[selected],f=forward(pt);const inY=[115,215];svgNode(svg,65,inY[0],26,'x₁',pt.x.toFixed(2),'#eaf3ff');svgNode(svg,65,inY[1],26,'x₂',pt.y.toFixed(2),'#eaf3ff');const h1Y=Array.from({length:net.h1},(_,k)=>42+k*(245/(Math.max(1,net.h1-1))));for(let j=0;j<2;j++)for(let k=0;k<net.h1;k++)svgLine(svg,91,inY[j],240,h1Y[k],net.W1[k][j]);h1Y.forEach((y,k)=>svgNode(svg,270,y,22,'h₁'+(k+1),f.h1[k].toFixed(2),'#f0edff'));const h2Y=[115,215];for(let j=0;j<net.h1;j++)for(let k=0;k<2;k++)svgLine(svg,292,h1Y[j],430,h2Y[k],net.W2[k][j]);h2Y.forEach((y,k)=>svgNode(svg,458,y,27,'h₂'+(k+1),f.h2[k].toFixed(2),'#fff3dd'));for(let k=0;k<2;k++)svgLine(svg,485,h2Y[k],575,165,net.W3[k]);svgNode(svg,605,165,34,'ŷ',f.p.toFixed(2),'#e8f8f2');$('#pathBox').textContent=`Input: [${pt.x.toFixed(2)}, ${pt.y.toFixed(2)}]\nHidden 1: [${f.h1.map(v=>v.toFixed(2)).join(', ')}]\nHidden 2: [${f.h2.map(v=>v.toFixed(2)).join(', ')}]\nOutput p(1): ${f.p.toFixed(3)} → klasea ${(f.p>=.5?1:0)} (benetakoa: ${pt.c})`}
+function metrics(){let ok=0,loss=0;for(const pt of points){const p=forward(pt).p;ok+=(p>=.5?1:0)===pt.c;loss+=-(pt.c*Math.log(p+1e-9)+(1-pt.c)*Math.log(1-p+1e-9))}$('#acc').textContent=(100*ok/points.length).toFixed(1)+'%';$('#loss').textContent=(loss/points.length).toFixed(3);$('#h1metric').textContent=net.h1}
+function render(){metrics();drawInput();drawDetectors();drawHidden();renderNetwork()}
+function resetAndTrain(){points=dataset($('#dataset').value);selected=0;train()}
+$('#dataset').onchange=resetAndTrain;$('#trainBtn').onclick=train;$('#h1size').oninput=e=>{$('#h1val').textContent=e.target.value};$('#epochs').oninput=e=>{$('#epochVal').textContent=e.target.value};window.addEventListener('resize',()=>net&&render());
+points=dataset('moons');train();
+</script>
+</main></body></html>

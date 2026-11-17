@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="eu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>5072 ML Lab · Logistic Regression vs Neural Network</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--ink:#10253f;--muted:#66758a;--blue:#1e73d8;--blue2:#eaf3ff;--red:#d94b5b;--green:#159570;--amber:#d98a12;--line:#dbe3ec;--shadow:0 16px 40px rgba(16,37,63,.08)}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink)}
+main{max-width:1220px;margin:auto;padding:38px 18px 60px}.kicker{font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.07em;font-size:13px}h1{font-size:clamp(34px,5vw,58px);line-height:1.03;margin:.12em 0 .18em}h2{margin:.1em 0 .4em;font-size:22px}p{color:var(--muted);line-height:1.55}.lead{max-width:900px;font-size:17px}.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:22px 0}.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:10px 15px;font-weight:800;cursor:pointer}.btn:hover{border-color:var(--blue)}.btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.secondary{background:#eef3f8}.grid{display:grid;grid-template-columns:1.05fr .8fr 1.35fr;gap:15px}.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow);min-width:0}.span2{grid-column:span 2}.span3{grid-column:1/-1}.tag{display:inline-block;background:var(--blue2);color:var(--blue);border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900}.mini{font-size:12px;color:var(--muted)}.metricrow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fbfcfe}.metric b{font-size:24px;display:block}.featureTable{width:100%;border-collapse:collapse}.featureTable td{padding:9px 5px;border-bottom:1px solid #edf1f5}.featureTable td:last-child{text-align:right;font-weight:800}.rowtarget{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:10px 12px;border-radius:14px;background:#f7fafc}.pill{border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900}.yes{background:#e8f8f2;color:#087a58}.no{background:#fff0f2;color:#b52f43}.canvasWrap{position:relative;width:100%;aspect-ratio:1.18;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}canvas{width:100%;height:100%;display:block}.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px}.network{width:100%;min-height:330px}.formula{background:#f6f9fc;border:1px solid var(--line);border-radius:16px;padding:11px 13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;overflow:auto}.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}.modelCard{border:1px solid var(--line);border-radius:18px;padding:14px}.modelCard.selected{border:2px solid var(--blue);background:#f7fbff}.probbar{height:10px;border-radius:999px;background:#edf1f5;overflow:hidden;margin:7px 0}.probbar>div{height:100%;background:var(--blue)}.message{padding:16px 18px;border-radius:18px;background:#fff8e8;border:1px solid #f0d49a}.message strong{color:#7c4b00}.flow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-weight:800}.flow span{padding:8px 10px;border-radius:12px;background:#eef4fa}.arrow{color:var(--blue);font-size:20px}.note{border-left:4px solid var(--blue);padding:9px 12px;background:#f7fbff;border-radius:10px;color:var(--muted)}footer{margin-top:34px;color:var(--muted);font-size:13px}@media(max-width:980px){.grid{grid-template-columns:1fr 1fr}.span3{grid-column:1/-1}.span2{grid-column:1/-1}.network{min-height:300px}}@media(max-width:680px){.grid{grid-template-columns:1fr}.span2,.span3{grid-column:auto}.metricrow,.compare{grid-template-columns:1fr 1fr}.bar{align-items:stretch}.btn{flex:1}.network{min-height:360px}}
+</style>
+</head>
+<body><main>
+<div class="kicker">UD5 · 5072 ML LAB · DEMO</div>
+<h1>Logistic Regression vs Neural Network</h1>
+<p class="lead"><strong>Erregresio logistikoa = sigmoidea duen neurona bakarra.</strong> Sare neuronalak ideia bera zabaltzen du: sarrera bakoitza geruza ezkutuko neurona guztiekin konektatzen da, eta neurona horiek irteera-neuronarekin. Aukeratu bidaiari bat eta jarraitu bere datuek sarean egiten duten bidea.</p>
+
+<div class="bar">
+  <button class="btn active" id="btnLR">Logistic Regression</button>
+  <button class="btn" id="btnNN">Sare neuronala · 4 → 3 → 1</button>
+  <button class="btn secondary" id="btnNext">Hurrengo bidaiaria →</button>
+</div>
+
+<section class="grid">
+  <article class="card">
+    <span class="tag">1 · DATUAK</span><h2>Titanic-like dataset sintetikoa</h2>
+    <p class="mini">Puntu bakoitza bidaiari bat da. X = adina · Y = tarifa. Kolorea benetako klasea da. Egin klik puntu batean.</p>
+    <div class="canvasWrap"><canvas id="scatter"></canvas></div>
+    <div class="legend"><span><i class="dot" style="background:#159570"></i>Bizirik = 1</span><span><i class="dot" style="background:#d94b5b"></i>Bizirik ez = 0</span><span>○ zirkulu beltza = hautatutako bidaiaria</span></div>
+  </article>
+
+  <article class="card">
+    <span class="tag">2 · ROW → INPUT VECTOR</span><h2>Bidaiari hautatua</h2>
+    <table class="featureTable" id="featureTable"></table>
+    <div class="rowtarget"><span>Benetako target-a</span><span class="pill" id="targetPill"></span></div>
+    <p class="mini">Dataset-eko <strong>row</strong> bateko feature bakoitza sarrera-geruzako neurona bihurtzen da. Sarrera-geruzak ez du kalkulurik egiten: balioak sarera eramaten ditu.</p>
+  </article>
+
+  <article class="card">
+    <span class="tag">3 · ARKITEKTURA</span><h2 id="networkTitle">Neurona bakarra</h2>
+    <svg class="network" id="networkSvg" viewBox="0 0 620 350" role="img" aria-label="Neural network diagram"></svg>
+    <div class="formula" id="formulaBox"></div>
+  </article>
+
+  <article class="card span2">
+    <span class="tag">4 · ALDERAKETA</span><h2>Zer aldatzen da?</h2>
+    <div class="compare">
+      <div class="modelCard" id="lrCard"><b>Logistic Regression</b><p class="mini">4 feature → pisu-batura → sigmoidea → probabilitatea</p><div class="probbar"><div id="lrProbBar"></div></div><div><strong id="lrProb"></strong> · p(bizirik)</div></div>
+      <div class="modelCard" id="nnCard"><b>Neural Network</b><p class="mini">4 feature → 3 hidden neurona → konbinazio berriak → sigmoidea</p><div class="probbar"><div id="nnProbBar"></div></div><div><strong id="nnProb"></strong> · p(bizirik)</div></div>
+    </div>
+    <div class="metricrow" style="margin-top:12px">
+      <div class="metric"><span class="mini">LR accuracy</span><b id="lrAcc">–</b></div>
+      <div class="metric"><span class="mini">NN accuracy</span><b id="nnAcc">–</b></div>
+      <div class="metric"><span class="mini">LR parametroak</span><b>5</b></div>
+      <div class="metric"><span class="mini">NN parametroak</span><b>19</b></div>
+    </div>
+  </article>
+
+  <article class="card">
+    <span class="tag">5 · GAKO-IDEIA</span><h2>Lineala bada, sare handiagoa ez da beti hobea</h2>
+    <div class="message"><strong>Begiratu bi accuracy-ak.</strong><br>Dataset hau nahita ia lineala da. Sare neuronalak gaitasun handiagoa du, baina arazo sinple batean Logistic Regression-ek emaitza oso antzekoa lor dezake.</div>
+    <div class="flow" style="margin-top:12px"><span>row</span><b class="arrow">→</b><span>input features</span><b class="arrow">→</b><span>weighted combinations</span><b class="arrow">→</b><span>probability</span></div>
+  </article>
+
+  <article class="card span3">
+    <span class="tag">IKASTEKO</span><h2>Begiratu konexioei, ez bakarrik iragarpenari</h2>
+    <div class="note"><strong>Logistic Regression:</strong> feature guztiak zuzenean irteera-neuronara doaz. <strong>MLP:</strong> feature bakoitza hidden neurona guztiekin konektatzen da; hidden neuronak feature-en konbinazio berriak ikasten saiatzen dira. Hori da sare neuronalaren lehen jauzi kontzeptuala.</div>
+  </article>
+</section>
+<footer>IES Xabier Zubiri-Manteo BHI · 5072 · Ikaskuntza Automatikoko Sistemak · Dataset sintetiko didaktikoa</footer>
+
+<script>
+'use strict';
+const $=s=>document.querySelector(s);
+const sigmoid=x=>1/(1+Math.exp(-Math.max(-30,Math.min(30,x))));
+function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+const rnd=mulberry32(5072);
+function randn(){let u=0,v=0;while(!u)u=rnd();while(!v)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+
+const data=[];
+for(let i=0;i<180;i++){
+  const sex=rnd()<.46?1:0; // 1 = emakumea
+  const pclass=rnd()<.24?1:(rnd()<.48?2:3);
+  const age=Math.max(3,Math.min(78,31+13*randn()+(pclass-2)*2));
+  const fare=Math.max(5,Math.min(180,18+(4-pclass)*20+16*Math.abs(randn())));
+  const logit=-.2 + 1.85*sex - .95*(pclass-2) - .032*(age-30) + .008*(fare-40) + .18*randn();
+  const p=sigmoid(logit);
+  const y=p>.5?1:0;
+  data.push({sex,pclass,age,fare,y});
+}
+const featureNames=['Sexua','Pclass','Adina','Tarifa'];
+const raw=data.map(d=>[d.sex,d.pclass,d.age,d.fare]);
+const means=[0,0,0,0], std=[0,0,0,0];
+for(let j=0;j<4;j++){means[j]=raw.reduce((s,r)=>s+r[j],0)/raw.length;std[j]=Math.sqrt(raw.reduce((s,r)=>s+(r[j]-means[j])**2,0)/raw.length)||1}
+const X=raw.map(r=>r.map((v,j)=>(v-means[j])/std[j]));
+const Y=data.map(d=>d.y);
+
+function trainLR(){let w=[0,0,0,0],b=0,lr=.12;for(let e=0;e<700;e++){let dw=[0,0,0,0],db=0;for(let i=0;i<X.length;i++){const p=sigmoid(w.reduce((s,v,j)=>s+v*X[i][j],b));const dz=p-Y[i];for(let j=0;j<4;j++)dw[j]+=dz*X[i][j];db+=dz}for(let j=0;j<4;j++)w[j]-=lr*dw[j]/X.length;b-=lr*db/X.length}return{w,b}}
+function trainNN(){const r=mulberry32(42);let W1=Array.from({length:3},()=>Array.from({length:4},()=> (r()-.5)*.7));let b1=[0,0,0],W2=Array.from({length:3},()=> (r()-.5)*.7),b2=0,lr=.07;
+  for(let e=0;e<1300;e++){
+    const dW1=Array.from({length:3},()=>[0,0,0,0]),db1=[0,0,0],dW2=[0,0,0];let db2=0;
+    for(let i=0;i<X.length;i++){
+      const h=W1.map((row,k)=>Math.tanh(row.reduce((s,v,j)=>s+v*X[i][j],b1[k])));const p=sigmoid(W2.reduce((s,v,k)=>s+v*h[k],b2));const dz2=p-Y[i];
+      for(let k=0;k<3;k++){dW2[k]+=dz2*h[k];const dh=dz2*W2[k]*(1-h[k]*h[k]);db1[k]+=dh;for(let j=0;j<4;j++)dW1[k][j]+=dh*X[i][j]}db2+=dz2;
+    }
+    const n=X.length;for(let k=0;k<3;k++){W2[k]-=lr*dW2[k]/n;b1[k]-=lr*db1[k]/n;for(let j=0;j<4;j++)W1[k][j]-=lr*dW1[k][j]/n}b2-=lr*db2/n;
+  }return{W1,b1,W2,b2}}
+const lrM=trainLR(), nnM=trainNN();
+function predLR(x){return sigmoid(lrM.w.reduce((s,v,j)=>s+v*x[j],lrM.b))}
+function predNN(x){const h=nnM.W1.map((row,k)=>Math.tanh(row.reduce((s,v,j)=>s+v*x[j],nnM.b1[k])));return{h,p:sigmoid(nnM.W2.reduce((s,v,k)=>s+v*h[k],nnM.b2))}}
+function accuracy(fn){let ok=0;for(let i=0;i<X.length;i++){const p=typeof fn(X[i])==='number'?fn(X[i]):fn(X[i]).p;if((p>=.5?1:0)===Y[i])ok++}return ok/X.length}
+$('#lrAcc').textContent=(accuracy(predLR)*100).toFixed(1)+'%';$('#nnAcc').textContent=(accuracy(predNN)*100).toFixed(1)+'%';
+
+let selected=17, model='lr';
+const canvas=$('#scatter'),ctx=canvas.getContext('2d');
+function setupCanvas(){const dpr=window.devicePixelRatio||1;const rect=canvas.getBoundingClientRect();canvas.width=Math.round(rect.width*dpr);canvas.height=Math.round(rect.height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);return{w:rect.width,h:rect.height}}
+function mapPoint(d,w,h){const pad=34;const x=pad+(d.age-3)/(78-3)*(w-2*pad);const y=h-pad-(d.fare-5)/(180-5)*(h-2*pad);return{x,y}}
+function drawScatter(){const{w,h}=setupCanvas();ctx.clearRect(0,0,w,h);ctx.strokeStyle='#dbe3ec';ctx.fillStyle='#66758a';ctx.font='11px system-ui';ctx.beginPath();ctx.moveTo(34,10);ctx.lineTo(34,h-34);ctx.lineTo(w-10,h-34);ctx.stroke();ctx.fillText('Adina →',w-65,h-11);ctx.save();ctx.translate(12,66);ctx.rotate(-Math.PI/2);ctx.fillText('Tarifa →',0,0);ctx.restore();
+  data.forEach((d,i)=>{const p=mapPoint(d,w,h);ctx.beginPath();ctx.arc(p.x,p.y,i===selected?6:3.6,0,Math.PI*2);ctx.fillStyle=d.y?'#159570':'#d94b5b';ctx.fill();if(i===selected){ctx.lineWidth=2;ctx.strokeStyle='#10253f';ctx.stroke()}})}
+canvas.addEventListener('click',e=>{const rect=canvas.getBoundingClientRect();const mx=e.clientX-rect.left,my=e.clientY-rect.top;let best=1e9,bi=0;const{width:w,height:h}=rect;data.forEach((d,i)=>{const p=mapPoint(d,w,h);const q=(p.x-mx)**2+(p.y-my)**2;if(q<best){best=q;bi=i}});selected=bi;render()});
+window.addEventListener('resize',drawScatter);
+
+function featureValue(d,j){if(j===0)return d.sex?'Emakumea (1)':'Gizona (0)';if(j===1)return String(d.pclass);if(j===2)return d.age.toFixed(1)+' urte';return d.fare.toFixed(1)}
+function renderTable(){const d=data[selected];$('#featureTable').innerHTML=featureNames.map((n,j)=>`<tr><td>${n}</td><td>${featureValue(d,j)}</td></tr>`).join('');const pill=$('#targetPill');pill.textContent=d.y?'Bizirik · 1':'Ez bizirik · 0';pill.className='pill '+(d.y?'yes':'no')}
+function node(svg,x,y,r,label,value,fill){const ns='http://www.w3.org/2000/svg';const g=document.createElementNS(ns,'g');const c=document.createElementNS(ns,'circle');c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',r);c.setAttribute('fill',fill);c.setAttribute('stroke','#9eb0c4');c.setAttribute('stroke-width','2');const t=document.createElementNS(ns,'text');t.setAttribute('x',x);t.setAttribute('y',y-3);t.setAttribute('text-anchor','middle');t.setAttribute('font-size','13');t.setAttribute('font-weight','800');t.setAttribute('fill','#10253f');t.textContent=label;const v=document.createElementNS(ns,'text');v.setAttribute('x',x);v.setAttribute('y',y+15);v.setAttribute('text-anchor','middle');v.setAttribute('font-size','11');v.setAttribute('fill','#66758a');v.textContent=value;g.append(c,t,v);svg.appendChild(g)}
+function line(svg,x1,y1,x2,y2,weight){const ns='http://www.w3.org/2000/svg';const l=document.createElementNS(ns,'line');l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',x2);l.setAttribute('y2',y2);l.setAttribute('stroke',weight>=0?'#1e73d8':'#d94b5b');l.setAttribute('stroke-opacity',.24+Math.min(.55,Math.abs(weight)*.18));l.setAttribute('stroke-width',1.2+Math.min(3,Math.abs(weight)*.7));svg.insertBefore(l,svg.firstChild)}
+function renderNetwork(){const svg=$('#networkSvg');svg.innerHTML='';const d=data[selected],x=X[selected],pLR=predLR(x),nn=predNN(x);const inY=[58,132,206,280],inLabels=['Sex','Pclass','Age','Fare'];inY.forEach((y,j)=>node(svg,80,y,27,inLabels[j],x[j].toFixed(2),'#eaf3ff'));
+  if(model==='lr'){
+    inY.forEach((y,j)=>line(svg,107,y,470,170,lrM.w[j]));node(svg,500,170,42,'σ',pLR.toFixed(2),'#e8f8f2');$('#networkTitle').textContent='Logistic Regression · neurona bakarra';$('#formulaBox').textContent='p = σ(w₁x₁ + w₂x₂ + w₃x₃ + w₄x₄ + b)';
+  }else{
+    const hY=[82,170,258];inY.forEach((y,j)=>hY.forEach((hy,k)=>line(svg,107,y,290,hy,nnM.W1[k][j])));hY.forEach((y,k)=>node(svg,320,y,29,'h'+(k+1),nn.h[k].toFixed(2),'#fff3dd'));hY.forEach((y,k)=>line(svg,349,y,485,170,nnM.W2[k]));node(svg,515,170,42,'σ',nn.p.toFixed(2),'#e8f8f2');$('#networkTitle').textContent='MLP · 4 → 3 → 1';$('#formulaBox').textContent='h = tanh(W₁x + b₁)   →   p = σ(W₂h + b₂)';
+  }
+  const ns='http://www.w3.org/2000/svg';[['INPUT',80,327],['HIDDEN',320,327],['OUTPUT',515,327]].forEach(([txt,x,y])=>{const t=document.createElementNS(ns,'text');t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('text-anchor','middle');t.setAttribute('font-size','11');t.setAttribute('font-weight','900');t.setAttribute('fill','#66758a');t.textContent=txt;svg.appendChild(t)});
+}
+function renderCompare(){const x=X[selected],lp=predLR(x),np=predNN(x).p;$('#lrProb').textContent=(lp*100).toFixed(1)+'%';$('#nnProb').textContent=(np*100).toFixed(1)+'%';$('#lrProbBar').style.width=(lp*100)+'%';$('#nnProbBar').style.width=(np*100)+'%';$('#lrCard').classList.toggle('selected',model==='lr');$('#nnCard').classList.toggle('selected',model==='nn')}
+function render(){drawScatter();renderTable();renderNetwork();renderCompare();$('#btnLR').classList.toggle('active',model==='lr');$('#btnNN').classList.toggle('active',model==='nn')}
+$('#btnLR').onclick=()=>{model='lr';render()};$('#btnNN').onclick=()=>{model='nn';render()};$('#btnNext').onclick=()=>{selected=(selected+1)%data.length;render()};
+render();
+</script>
+</main></body></html>

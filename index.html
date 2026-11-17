@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="eu">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>5072 ML Lab · BETA</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--ink:#10253f;--muted:#66758a;--blue:#1e73d8;--line:#dbe3ec}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:Inter,system-ui,sans-serif;color:var(--ink)}
+main{max-width:1060px;margin:auto;padding:50px 20px}
+h1{font-size:clamp(36px,6vw,64px);margin:.1em 0;line-height:1}
+.kicker{font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.06em}
+p{color:var(--muted);line-height:1.55}
+.unit{margin-top:42px}
+.unit h2{font-size:26px;margin:0 0 6px}
+.unit-intro{margin:0 0 18px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;text-decoration:none;color:inherit;display:block;transition:.15s ease}
+.card:hover{border-color:var(--blue);transform:translateY(-2px)}
+.card h3{font-size:21px;margin:12px 0 8px}
+.tag{display:inline-block;background:#eaf3ff;color:var(--blue);border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900}
+.arrow{font-size:28px;color:var(--blue)}
+footer{margin-top:52px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body><main>
+
+<div class="kicker">BETA · 5072 ML LAB</div>
+<h1>Ikaskuntza Automatikoko Sistemak</h1>
+
+<p>
+Machine Learning-eko kontzeptuak <strong>ikusi, manipulatu eta esperimentatzeko</strong>
+demo interaktiboak. Laborategiek ikaskuntza-ibilbide bera jarraitzen dute:
+<strong>ulertu → ikusi → esperimentatu → interpretatu</strong>.
+</p>
+
+<section class="unit">
+<h2>UD4 · Erregresioa</h2>
+<p class="unit-intro">
+Erregresio lineala, errorea, optimizazioa eta erregularizazioa modu bisualean lantzeko bost laborategi.
+</p>
+
+<div class="cards">
+
+<a class="card" href="demos/erregresio-lineala/">
+<span class="tag">UD4 · 1 · OLS</span>
+<h3>Response Predictor</h3>
+<p>Puntuak mugitu, hondarrak ikusi eta ŷ = b₀ + b₁x zuzen onena nola aldatzen den ulertu.</p>
+<div class="arrow">→</div>
+</a>
+
+<a class="card" href="demos/metrikak/">
+<span class="tag">UD4 · 2 · METRIKAK</span>
+<h3>MAE · RMSE · R²</h3>
+<p>Errore berdinak, outlier-ak eta baseline-a manipulatuz hiru metrikek zer neurtzen duten alderatu.</p>
+<div class="arrow">→</div>
+</a>
+
+<a class="card" href="demos/gradient-descent/">
+<span class="tag">UD4 · 3 · OPTIMIZAZIOA</span>
+<h3>Gradient Descent</h3>
+<p>Forward → MSE → gradient → update zikloa urratsez urrats ikusi, learning rate-aren efektuarekin.</p>
+<div class="arrow">→</div>
+</a>
+
+<a class="card" href="demos/ridge-lasso/">
+<span class="tag">UD4 · 4 · REGULARIZATION</span>
+<h3>Ridge vs Lasso</h3>
+<p>α handitu eta ikusi Ridge-k koefizienteen magnitudea nola kontrolatzen duen eta Lasso-k batzuk nola eraman ditzakeen 0ra.</p>
+<div class="arrow">→</div>
+</a>
+
+<a class="card" href="demos/ridge-lasso-futbola/">
+<span class="tag">UD4 · 5 · APLIKAZIOA</span>
+<h3>Ridge vs Lasso · Futbola</h3>
+<p>EA SPORTS FC estiloko feature-ekin, OLS, Ridge eta Lasso alderatu, feature korrelazionatuak aztertu eta modeloak metriketatik bereizi.</p>
+<div class="arrow">→</div>
+</a>
+
+</div>
+</section>
+
+<section class="unit">
+<h2>UD5 · Sare Neuronalak eta Deep Learning</h2>
+<p class="unit-intro">
+Neurona bakarretik MLP-ra, ez-linealtasunera, entrenamendura eta CNN-etara igarotzeko sei laborategi interaktibo.
+</p>
+
+<div class="cards">
+
+<a class="card" href="demos/xor-playground/">
+<span class="tag">UD5 · 1 · XOR</span>
+<h3>XOR Playground</h3>
+<p>Ikusi zergatik neurona bakar batek ezin duen XOR ebatzi eta nola hidden layer + aktibazio ez-linealak espazioa eraldatzen duten.</p>
+<div class="arrow">→</div>
+</a>
+
+<a class="card" href="demos/logistic-vs-neural/">
+<span class="tag">UD5 · 2 · LR → MLP</span>
+<h3>Logistic Regression vs Neural Network</h3>
+<p>Titanic-like adibide batekin, row bat input layer bihurtu eta alderatu neurona bakarra eta fully connected sare txiki bat.</p>
+<div class="arrow">→</div>
+</a>
+
+<a class="card" href="demos/activation-lab/">
+<span class="tag">UD5 · 3 · AKTIBAZIOAK</span>
+<h3>Activation Lab</h3>
+<p>Sigmoid, tanh, ReLU eta beste aktibazio-funtzioekin esperimentatu eta ez-linealtasunak sarean duen rola ulertu.</p>
+<div class="arrow">→</div>
+</a>
+
+<a class="card" href="demos/feature-combination-lab/">
+<span class="tag">UD5 · 4 · FEATURE LEARNING</span>
+<h3>Feature Combination Lab</h3>
+<p>XOR, moons eta circles datuekin, ikusi hidden neuron-ek feature-ak nola konbinatzen dituzten eta geruzek irudikapen berriak nola sortzen dituzten.</p>
+<div class="arrow">→</div>
+</a>
+
+<a class="card" href="demos/training-doctor/">
+<span class="tag">UD5 · 5 · ENTRENAMENDUA</span>
+<h3>Training Doctor</h3>
+<p>Train eta validation kurbak aztertu eta underfitting, fit egokia eta overfitting egoerak identifikatu.</p>
+<div class="arrow">→</div>
+</a>
+
+<a class="card" href="demos/cnn-kernel-explorer/">
+<span class="tag">UD5 · 6 · CNN</span>
+<h3>CNN Kernel Explorer</h3>
+<p>Kernel bat irudiaren gainean nola mugitzen den ikusi, konboluzioa kalkulatu eta sortzen den feature map-a aztertu.</p>
+<div class="arrow">→</div>
+</a>
+
+</div>
+</section>
+
+<footer>IES Xabier Zubiri-Manteo BHI · 5072 · Beta materialak</footer>
+
+</main></body></html>
