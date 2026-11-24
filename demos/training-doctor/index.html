@@ -5,34 +5,72 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Training Doctor v2 · 5072 ML Lab</title>
 <style>
+
 :root{
   --bg:#f5f7fb;--card:#fff;--ink:#10253f;--muted:#66758a;
   --blue:#1e73d8;--blue2:#eaf3ff;--green:#16885a;--green2:#e9f7f1;
   --orange:#b56a00;--orange2:#fff3df;--purple:#7048b5;--purple2:#f2edff;
-  --red:#b64545;--red2:#fff0f0;--line:#dbe3ec;--shadow:0 14px 34px rgba(16,37,63,.08)
+  --red:#b64545;--red2:#fff0f0;--line:#dbe3ec;
+  --shadow:0 14px 34px rgba(16,37,63,.08)
 }
 *{box-sizing:border-box}
-html,body{overflow-x:hidden}
-body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}
-.wrap{max-width:1180px;margin:auto;padding:26px 18px 50px}
-.top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
-.brand{font-weight:900;letter-spacing:.04em}.back{color:var(--blue);text-decoration:none}
-.hero,.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;margin-bottom:16px;box-shadow:var(--shadow)}
+html,body{margin:0;overflow-x:hidden}
+body{
+  background:var(--bg);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink)
+}
+button,input,select,output{font:inherit}
+button{max-width:100%}
+.wrap{width:min(1180px,100%);margin:auto;padding:26px 18px 50px}
+.top{
+  display:flex;justify-content:space-between;gap:12px;
+  align-items:center;flex-wrap:wrap;margin-bottom:16px
+}
+.brand{font-weight:900;letter-spacing:.04em}
+.back{color:var(--blue);text-decoration:none}
+.hero,.card{
+  min-width:0;max-width:100%;overflow:hidden;
+  background:#fff;border:1px solid var(--line);border-radius:22px;
+  padding:22px;margin-bottom:16px;box-shadow:var(--shadow)
+}
 .hero{background:linear-gradient(135deg,#fff,#eef5ff)}
-h1{font-size:clamp(1.9rem,4vw,3rem);margin:.15em 0;line-height:1.06}
-h2{font-size:clamp(1.15rem,2.1vw,1.4rem);margin:.15em 0 .55em}
+h1{
+  font-size:clamp(1.9rem,4vw,3rem);line-height:1.06;
+  margin:.15em 0;overflow-wrap:anywhere
+}
+h2{
+  font-size:clamp(1.15rem,2.1vw,1.4rem);line-height:1.2;
+  margin:.15em 0 .55em;overflow-wrap:anywhere
+}
 p{color:var(--muted);line-height:1.55}
-.pill{display:inline-block;border-radius:999px;background:var(--blue2);color:var(--blue);font-weight:900;font-size:.8rem;padding:5px 10px}
-.modebar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
-.modebtn,.btn{font:inherit;font-weight:800;border:1px solid #c9d5e3;background:#fff;color:var(--ink);border-radius:12px;padding:9px 12px;cursor:pointer}
-.modebtn.active,.btn.primary{border-color:var(--blue);background:var(--blue);color:#fff}
+.small{display:block;font-size:.9rem;color:var(--muted);line-height:1.4}
+.pill{
+  display:inline-block;border-radius:999px;background:var(--blue2);
+  color:var(--blue);font-weight:900;font-size:.8rem;padding:5px 10px
+}
 .hidden{display:none!important}
 
+.modebar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.modebtn,.btn{
+  border:1px solid #c9d5e3;background:#fff;color:var(--ink);
+  border-radius:12px;padding:9px 12px;font-weight:800;cursor:pointer
+}
+.modebtn:hover,.btn:hover{border-color:var(--blue);background:var(--blue2)}
+.modebtn.active,.btn.primary{
+  border-color:var(--blue);background:var(--blue);color:#fff
+}
+
+/* Hero / objective */
 .goal{
-  display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);
+  display:grid;
+  grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);
   gap:14px;margin-top:16px
 }
-.goalbox{border-radius:16px;padding:16px;min-width:0}
+.goalbox{
+  min-width:0;border-radius:16px;padding:16px;
+  line-height:1.5;overflow-wrap:anywhere
+}
 .goalbox.good{background:var(--green2);border:1px solid #bfe5d7}
 .goalbox.info{background:var(--blue2);border:1px solid #cfe3f7}
 .goalbox strong{display:block;margin-bottom:6px}
@@ -41,75 +79,156 @@ p{color:var(--muted);line-height:1.55}
   display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
   gap:10px;margin:16px 0
 }
-.phase{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff;min-width:0}
+.phase{
+  min-width:0;border:1px solid var(--line);border-radius:16px;
+  padding:14px;line-height:1.45;overflow-wrap:anywhere
+}
 .phase.under{background:var(--orange2)}
 .phase.good{background:var(--green2)}
 .phase.over{background:var(--red2)}
 .phase strong{display:block;margin-bottom:5px}
 
-.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.metric{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff;min-width:0}
+/* Shared layouts */
+.grid2{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;align-items:start
+}
+.grid3{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;align-items:stretch
+}
+.metric{
+  min-width:0;border:1px solid var(--line);border-radius:16px;
+  padding:14px;background:#fff;overflow:hidden
+}
 .metric b{display:block;font-size:1.45rem;margin-top:5px;overflow-wrap:anywhere}
-.callout{border-radius:14px;padding:13px 15px;line-height:1.5;margin-top:12px;overflow-wrap:anywhere}
-.blue{background:var(--blue2)}.green{background:var(--green2)}.orange{background:var(--orange2)}.purple{background:var(--purple2)}.red{background:var(--red2)}
+.callout{
+  min-width:0;border-radius:14px;padding:13px 15px;
+  line-height:1.5;margin-top:12px;overflow-wrap:anywhere
+}
+.blue{background:var(--blue2)}.green{background:var(--green2)}
+.orange{background:var(--orange2)}.purple{background:var(--purple2)}
+.red{background:var(--red2)}
 
-.row{display:grid;grid-template-columns:130px minmax(0,1fr) 78px;gap:12px;align-items:center;margin:12px 0}
-.row label{font-weight:800}.row output{text-align:right;font-variant-numeric:tabular-nums;font-weight:900}
-input[type=range]{width:100%;accent-color:var(--blue)}
-canvas{width:100%;height:auto;border:1px solid var(--line);border-radius:14px;background:#fff;display:block}
+/* Sliders */
+.row{
+  display:grid;
+  grid-template-columns:140px minmax(0,1fr) 72px;
+  gap:12px;align-items:center;margin:12px 0
+}
+.row label{font-weight:800;overflow-wrap:anywhere}
+.row output{text-align:right;font-variant-numeric:tabular-nums;font-weight:900}
+input[type=range]{width:100%;min-width:0;accent-color:var(--blue)}
 
+/* Charts */
+canvas{
+  display:block;width:100%;max-width:100%;height:auto;
+  border:1px solid var(--line);border-radius:14px;background:#fff
+}
+
+/* Guided diagnosis */
 .status{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;margin-top:12px
 }
-.status .item{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fbfcfe;min-width:0}
-.status .item b{display:block;font-size:1.2rem;margin-top:4px}
+.status .item{
+  min-width:0;border:1px solid var(--line);border-radius:14px;
+  padding:12px;background:#fbfcfe;overflow:hidden
+}
+.status .item b{
+  display:block;font-size:1.2rem;margin-top:4px;
+  font-variant-numeric:tabular-nums;overflow-wrap:anywhere
+}
 .badge{
-  display:inline-block;border-radius:999px;padding:6px 10px;font-weight:900;font-size:.82rem
+  display:inline-block;max-width:100%;border-radius:999px;
+  padding:6px 10px;font-weight:900;font-size:.82rem;
+  overflow-wrap:anywhere
 }
-.badge.green{background:#dff4ea;color:#116c49}.badge.orange{background:#fff0cf;color:#9a5b00}.badge.red{background:#ffe1e1;color:#9b3030}
+.badge.green{background:#dff4ea;color:#116c49}
+.badge.orange{background:#fff0cf;color:#9a5b00}
+.badge.red{background:#ffe1e1;color:#9b3030}
 
 .mission{
-  background:#fff7ed;border:1px solid #fed7aa;border-radius:18px;padding:16px;margin-bottom:14px
+  min-width:0;background:#fff7ed;border:1px solid #fed7aa;
+  border-radius:18px;padding:16px;margin-bottom:14px;
+  line-height:1.55;overflow-wrap:anywhere
 }
 .mission strong{color:#9a5b00}
 
-.actiongrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.action{
-  border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff;min-width:0
+/* Guided action cards */
+.actiongrid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;align-items:stretch
 }
-.action b{display:block;margin-bottom:4px}
-.action .btn{width:100%;margin-top:8px}
+.action{
+  min-width:0;display:flex;flex-direction:column;
+  border:1px solid var(--line);border-radius:16px;
+  padding:14px;background:#fff;overflow:hidden
+}
+.action b{display:block;margin-bottom:5px}
+.action .small{margin-bottom:12px}
+.action .btn{width:100%;margin-top:auto;white-space:normal}
+.actionFeedback{margin-top:12px}
 
-.controls{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:16px 0}
-.control{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;min-width:0}
-.control label{font-size:11px;font-weight:900;color:var(--muted);display:block;margin-bottom:5px;text-transform:uppercase}
-.control select,.control input,.control button{width:100%;max-width:100%;min-width:0}
-.control select,.control button{border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);padding:9px;font-weight:800}
-.control button{background:var(--purple);color:#fff;cursor:pointer}
-.small{font-size:.9rem;color:var(--muted)}
+/* Advanced controls */
+.controls{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:10px;margin:16px 0
+}
+.controls>*{min-width:0}
+.controls button{
+  width:100%;min-width:0;white-space:normal;
+  border:1px solid #c9d5e3;background:#fff;color:var(--ink);
+  border-radius:12px;padding:9px 10px;font-weight:800;cursor:pointer
+}
+.controls button.active{
+  border-color:var(--blue);background:var(--blue2)
+}
 
-.map3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.footer{font-size:.85rem;color:var(--muted);padding:6px 2px 30px}
+.map3{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;align-items:stretch
+}
+.map3 .callout,.grid3 .callout{margin-top:0;height:100%}
 
+label:has(input[type=checkbox]){
+  display:flex;align-items:flex-start;gap:8px;line-height:1.45
+}
+label:has(input[type=checkbox]) input{margin-top:.2em;flex:0 0 auto}
+
+.footer{
+  font-size:.85rem;color:var(--muted);
+  padding:6px 2px 30px;line-height:1.45
+}
+
+/* Tablet */
 @media(max-width:900px){
   .goal,.grid2{grid-template-columns:1fr}
+  .timeline,.status,.actiongrid,.map3,.grid3{grid-template-columns:1fr}
   .controls{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .timeline,.status,.actiongrid,.map3{grid-template-columns:1fr}
+  .hero,.card{padding:19px}
 }
+
+/* Small tablet / phone */
 @media(max-width:620px){
   .wrap{padding:20px 12px 40px}
   .hero,.card{padding:16px;border-radius:18px}
-  .controls{grid-template-columns:1fr 1fr}
-  .row{grid-template-columns:105px minmax(0,1fr) 60px}
   .modebar{display:grid;grid-template-columns:1fr}
   .modebtn{width:100%}
+  .controls{grid-template-columns:1fr 1fr}
+  .row{grid-template-columns:110px minmax(0,1fr) 58px;gap:8px}
 }
+
+/* Narrow phone */
 @media(max-width:460px){
+  .wrap{padding:16px 10px 34px}
+  h1{font-size:1.9rem}
   .controls{grid-template-columns:1fr}
-  .row{grid-template-columns:1fr}
+  .row{grid-template-columns:1fr;gap:6px}
   .row output{text-align:left}
+  .phase,.goalbox,.mission,.callout{font-size:.95rem}
 }
+
 </style>
 </head>
 <body>
@@ -167,7 +286,7 @@ canvas{width:100%;height:auto;border:1px solid var(--line);border-radius:14px;ba
 
   <div class="grid2">
     <section class="card">
-      <h2>Train / validation loss</h2>
+      <h2>Train / datu berrietako loss</h2>
       <canvas id="gPlot" width="620" height="390"></canvas>
       <div class="callout blue">
         <strong>Begiratu batez ere datu berrietako kurba.</strong>
@@ -211,9 +330,12 @@ canvas{width:100%;height:auto;border:1px solid var(--line);border-radius:14px;ba
       </div>
       <div class="action">
         <b>Overfitting bada</b>
-        <span class="small">Validation okertzen hasi da.</span>
+        <span class="small">Datu berrietako loss igotzen hasi da.</span>
         <button class="btn" id="goBest">Itzuli datu berrien minimora</button>
       </div>
+    </div>
+    <div class="callout blue actionFeedback" id="gActionFeedback">
+      Aukeratu ekintza bat diagnostikoaren arabera.
     </div>
   </section>
 
@@ -405,12 +527,47 @@ function guidedUpdate(){
   if($('#gEarly').checked) bestMsg+=` Early Stopping-ek gutxi gorabehera epoch ${stop+1}-ean geldituko luke entrenamendua.`;
   $('#gBestInfo').innerHTML=bestMsg;
 }
-$('#gEpoch').oninput=guidedUpdate;
-$('#gDrop').oninput=guidedUpdate;
+$('#gEpoch').oninput=()=>{
+  guidedUpdate();
+  const box=$('#gActionFeedback');
+  box.className='callout blue actionFeedback';
+  box.innerHTML='Epoch-a aldatu duzu. Begiratu diagnostikoa eta erabaki hurrengo pausoa.';
+};
+$('#gDrop').oninput=()=>{
+  guidedUpdate();
+  const box=$('#gActionFeedback');
+  box.className='callout blue actionFeedback';
+  box.innerHTML='Dropout-a aldatu duzu. Begiratu train/datu berrietako gap-a nola aldatu den.';
+};
 $('#gEarly').oninput=guidedUpdate;
-$('#moreEpochs').onclick=()=>{let e=Math.min(100,+$('#gEpoch').value+8);$('#gEpoch').value=e;guidedUpdate()};
-$('#keepModel').onclick=()=>{};
-$('#goBest').onclick=()=>{let [,va]=guidedCurves(+$('#gDrop').value);let b=va.indexOf(Math.min(...va))+1;$('#gEpoch').value=b;guidedUpdate()};
+$('#moreEpochs').onclick=()=>{
+  let e=Math.min(100,+$('#gEpoch').value+8);
+  $('#gEpoch').value=e;guidedUpdate();
+  const box=$('#gActionFeedback');
+  box.className='callout blue actionFeedback';
+  box.innerHTML='➡️ 8 epoch gehiago entrenatu ditugu. Begiratu berriro datu berrietako loss-a: jaisten jarraitzen du ala igotzen hasi da?';
+};
+$('#keepModel').onclick=()=>{
+  let epoch=+$('#gEpoch').value,drop=+$('#gDrop').value;
+  let [,va]=guidedCurves(drop),best=va.indexOf(Math.min(...va))+1;
+  const diff=Math.abs(epoch-best);
+  const box=$('#gActionFeedback');
+  if(diff<=5){
+    box.className='callout green actionFeedback';
+    box.innerHTML=`✅ <strong>Ondo.</strong> Epoch ${epoch} puntu egokiaren inguruan dago. Orain helburua ez da gehiago entrenatzea, generalizazioa mantentzea baizik.`;
+  }else{
+    box.className='callout orange actionFeedback';
+    box.innerHTML=`⚠️ Oraindik ez zaude puntu egokian. Datu berrietako loss minimoa epoch ${best} inguruan dago.`;
+  }
+};
+$('#goBest').onclick=()=>{
+  let [,va]=guidedCurves(+$('#gDrop').value);
+  let b=va.indexOf(Math.min(...va))+1;
+  $('#gEpoch').value=b;guidedUpdate();
+  const box=$('#gActionFeedback');
+  box.className='callout green actionFeedback';
+  box.innerHTML=`↩️ Epoch ${b}-ra itzuli gara: datu berrietako loss minimoaren ingurura.`;
+};
 
 /* ---------- Advanced mode (original) ---------- */
 let mode='good';
