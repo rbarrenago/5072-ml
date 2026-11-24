@@ -128,7 +128,7 @@ canvas{width:100%;height:auto;border:1px solid var(--line);border-radius:14px;ba
   <div class="goal">
     <div class="goalbox good">
       <strong>✅ Zer bilatzen dugu?</strong>
-      Validation loss txikia eta train/validation arteko aldea txikia.
+      Datu berrietako loss txikia eta train/datu berrietako loss arteko aldea txikia.
     </div>
     <div class="goalbox info">
       <strong>❌ Zer EZ dugu bilatzen?</strong>
@@ -138,8 +138,8 @@ canvas{width:100%;height:auto;border:1px solid var(--line);border-radius:14px;ba
 
   <div class="timeline">
     <div class="phase under"><strong>1 · Epoch gutxi</strong>UNDERFITTING<br><span class="small">Oraindik ez du nahikoa ikasi.</span></div>
-    <div class="phase good"><strong>2 · Puntu egokia</strong>EGOKITZE ONA<br><span class="small">Validation loss minimoaren ingurua.</span></div>
-    <div class="phase over"><strong>3 · Epoch gehiegi</strong>OVERFITTING<br><span class="small">Train hobetzen da, validation okertzen.</span></div>
+    <div class="phase good"><strong>2 · Puntu egokia</strong>EGOKITZE ONA<br><span class="small">Datu berrietako loss minimoaren ingurua.</span></div>
+    <div class="phase over"><strong>3 · Epoch gehiegi</strong>OVERFITTING<br><span class="small">Train hobetzen da, baina datu berrietako emaitza okertzen.</span></div>
   </div>
 
   <div class="modebar">
@@ -152,8 +152,8 @@ canvas{width:100%;height:auto;border:1px solid var(--line);border-radius:14px;ba
 <section id="guidedMode">
 
   <div class="mission">
-    <strong>🎯 ERRONKA:</strong> mugitu epoch kopurua eta aurkitu <strong>validation loss txikiena</strong>.
-    Ez begiratu train loss bakarrik. Zure helburua da modeloa datu berrietan ahalik eta ondoen ibiltzea.
+    <strong>🎯 ERRONKA:</strong> mugitu epoch kopurua eta aurkitu <strong>datu berrietako loss txikiena</strong>.
+    Ez begiratu train loss bakarrik. Zure helburua da modeloa ikusi gabeko datuetan ahalik eta ondoen ibiltzea.
   </div>
 
   <section class="card">
@@ -170,8 +170,8 @@ canvas{width:100%;height:auto;border:1px solid var(--line);border-radius:14px;ba
       <h2>Train / validation loss</h2>
       <canvas id="gPlot" width="620" height="390"></canvas>
       <div class="callout blue">
-        <strong>Begiratu batez ere validation kurba.</strong>
-        Validation loss jaisten bada, modeloa hobetzen ari da. Igotzen hasten bada, overfitting-arriskua dago.
+        <strong>Begiratu batez ere datu berrietako kurba.</strong>
+        Datu berrietako loss jaisten bada, generalizazioa hobetzen ari da. Igotzen hasten bada, overfitting-arriskua dago.
       </div>
     </section>
 
@@ -180,8 +180,8 @@ canvas{width:100%;height:auto;border:1px solid var(--line);border-radius:14px;ba
 
       <div class="status">
         <div class="item"><span class="small">Train loss</span><b id="gTrain">—</b></div>
-        <div class="item"><span class="small">Validation loss</span><b id="gVal">—</b></div>
-        <div class="item"><span class="small">Train–Val gap</span><b id="gGap">—</b></div>
+        <div class="item"><span class="small">Datu berrietako loss</span><b id="gVal">—</b></div>
+        <div class="item"><span class="small">Train–Berriak gap</span><b id="gGap">—</b></div>
       </div>
 
       <div class="callout" id="gDiag"></div>
@@ -212,17 +212,27 @@ canvas{width:100%;height:auto;border:1px solid var(--line);border-radius:14px;ba
       <div class="action">
         <b>Overfitting bada</b>
         <span class="small">Validation okertzen hasi da.</span>
-        <button class="btn" id="goBest">Itzuli validation minimora</button>
+        <button class="btn" id="goBest">Itzuli datu berrien minimora</button>
       </div>
     </div>
   </section>
 
   <section class="card">
+    <h2>📌 Oraingo ikasturteko mapa</h2>
+    <div class="callout blue">
+      <strong>TRAIN</strong> → modeloa entrenatzeko erabiltzen dugu.<br>
+      <strong>TEST</strong> → azken ebaluaziorako gordetzen dugu.<br><br>
+      Demo honetan <strong>“datu berrietako loss”</strong> esaten diogu entrenamenduan generalizazioa kontrolatzeko erabiltzen den neurketari.
+      <strong>UD7n</strong> formalizatuko dugu ideia hori <em>validation set</em> bezala.
+    </div>
+  </section>
+
+  <section class="card">
     <h2>1. automatizazioa: Early Stopping</h2>
-    <p>Lehenik zuk aurkitu duzu validation loss minimoa. Orain galdera da: <strong>ordenagailuak automatikoki aurki dezake?</strong></p>
+    <p>Lehenik zuk aurkitu duzu datu berrietako loss minimoa. Orain galdera da: <strong>ordenagailuak automatikoki aurki dezake?</strong></p>
     <label style="font-weight:800"><input id="gEarly" type="checkbox"> Early Stopping aktibatu (patience=6)</label>
     <div class="callout blue" id="earlyExplanation">
-      Early Stopping-ek validation loss kontrolatzen du. Ez du modeloa magikoki hobetzen: <strong>noiz gelditu</strong> erabakitzen laguntzen du.
+      Early Stopping-ek entrenamenduan erabiltzen den <strong>datu berrien kontrol-loss</strong> bat begiratzen du. Ez du modeloa magikoki hobetzen: <strong>noiz gelditu</strong> erabakitzen laguntzen du.
     </div>
   </section>
 
@@ -242,9 +252,9 @@ canvas{width:100%;height:auto;border:1px solid var(--line);border-radius:14px;ba
   <section class="card">
     <h2>Gogoratzeko mapa</h2>
     <div class="map3">
-      <div class="callout orange"><strong>Underfitting</strong><br>Train loss altua + validation loss altua.<br><br><strong>Zer egin?</strong><br>Entrenatu gehiago edo modeloa indartu.</div>
-      <div class="callout green"><strong>Egokitze ona</strong><br>Train eta validation baxuak eta elkarrengandik gertu.<br><br><strong>Zer egin?</strong><br>Mantendu.</div>
-      <div class="callout red"><strong>Overfitting</strong><br>Train loss jaisten da baina validation igotzen hasten da.<br><br><strong>Zer egin?</strong><br>Early Stopping / Dropout / datu gehiago.</div>
+      <div class="callout orange"><strong>Underfitting</strong><br>Train loss altua + datu berrietako loss altua.<br><br><strong>Zer egin?</strong><br>Entrenatu gehiago edo modeloa indartu.</div>
+      <div class="callout green"><strong>Egokitze ona</strong><br>Train eta datu berrietako loss baxuak eta elkarrengandik gertu.<br><br><strong>Zer egin?</strong><br>Mantendu.</div>
+      <div class="callout red"><strong>Overfitting</strong><br>Train loss jaisten da baina datu berrietako loss igotzen hasten da.<br><br><strong>Zer egin?</strong><br>Early Stopping / Dropout / datu gehiago.</div>
     </div>
   </section>
 
@@ -343,7 +353,7 @@ function drawCurve(canvas,tr,va,current,best,stop=null){
   g.beginPath();g.moveTo(X(current),p);g.lineTo(X(current),H-p);g.stroke();
 
   g.fillStyle='#1e73d8';g.font='13px system-ui';g.fillText('train',W-120,28);
-  g.fillStyle='#b64545';g.fillText('validation',W-72,28);
+  g.fillStyle='#b64545';g.fillText('datu berriak',W-95,28);
   g.fillStyle='#16885a';g.fillText('best',X(best)-12,H-18);
   g.fillStyle='#10253f';g.fillText('zu',Math.min(W-42,X(current)+5),H-18);
 }
@@ -373,12 +383,12 @@ function guidedUpdate(){
     advice='Zer egin? → Entrenatu gehiago. Dropout gehiago jartzea ez da lehen konponbidea.';
   }else if(idx <= best+5){
     state='EGOKITZE ONA'; bClass='green';
-    diag='<strong>EGOKITZE ONA:</strong> validation loss minimoaren inguruan zaude eta train/validation arteko tartea txikia da.';
+    diag='<strong>EGOKITZE ONA:</strong> datu berrietako loss minimoaren inguruan zaude eta train/datu berrietako loss arteko tartea txikia da.';
     advice='Zer egin? → Mantendu. Helburua ez da train loss = 0, generalizazio ona baizik.';
   }else{
     state='OVERFITTING'; bClass='red';
-    diag='<strong>OVERFITTING:</strong> train loss jaisten jarraitzen du, baina validation loss dagoeneko igo da.';
-    advice='Zer egin? → Itzuli validation minimora, Early Stopping aktibatu edo Dropout moderatua probatu.';
+    diag='<strong>OVERFITTING:</strong> train loss jaisten jarraitzen du, baina datu berrietako loss dagoeneko igo da.';
+    advice='Zer egin? → Itzuli datu berrien minimora, Early Stopping aktibatu edo Dropout moderatua probatu.';
   }
 
   $('#gDiag').className='callout '+bClass;
@@ -388,7 +398,7 @@ function guidedUpdate(){
   $('#gBadge').textContent=state;
 
   const diff=epoch-(best+1);
-  let bestMsg=`Validation loss minimoa <strong>epoch ${best+1}</strong> inguruan dago. `;
+  let bestMsg=`Datu berrietako loss minimoa <strong>epoch ${best+1}</strong> inguruan dago. `;
   if(diff<0) bestMsg+=`Oraindik ${Math.abs(diff)} epoch inguru falta zaizkizu.`;
   else if(Math.abs(diff)<=5) bestMsg+=`Oso gertu zaude.`;
   else bestMsg+=`${diff} epoch inguru beranduago zaude; dagoeneko overfitting-erantz zoaz.`;
