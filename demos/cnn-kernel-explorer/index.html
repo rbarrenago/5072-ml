@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CNN Kernel Explorer v2 · 5072 ML Lab</title>
+<title>CNN Kernel Explorer v3 · 5072 ML Lab</title>
 <style>
 :root{
   --bg:#f5f7fb;--card:#fff;--ink:#10253f;--muted:#66758a;
@@ -14,13 +14,14 @@
 *{box-sizing:border-box}
 html,body{margin:0;overflow-x:hidden}
 body{background:var(--bg);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink)}
-.wrap{width:min(1180px,100%);margin:auto;padding:26px 18px 50px}
+.wrap{width:min(1200px,100%);margin:auto;padding:26px 18px 50px}
 .top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
 .brand{font-weight:900;letter-spacing:.04em}.back{color:var(--blue);text-decoration:none}
 .hero,.card{min-width:0;background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;margin-bottom:16px;box-shadow:var(--shadow)}
 .hero{background:linear-gradient(135deg,#fff,#eef5ff)}
 h1{font-size:clamp(1.9rem,4vw,3rem);line-height:1.06;margin:.15em 0}
 h2{font-size:clamp(1.15rem,2.1vw,1.4rem);line-height:1.2;margin:.15em 0 .55em}
+h3{margin:.1em 0 .45em}
 p{color:var(--muted);line-height:1.55}
 .small{font-size:.9rem;color:var(--muted);line-height:1.45}
 .pill{display:inline-block;border-radius:999px;background:var(--blue2);color:var(--blue);font-weight:900;font-size:.8rem;padding:5px 10px}
@@ -36,59 +37,27 @@ button{
 button:hover,button.active{border-color:var(--blue);background:var(--blue2)}
 .modebtn.active{background:var(--blue);color:#fff}
 
-.process{
-  display:grid;
-  grid-template-columns:repeat(5,minmax(0,1fr));
-  gap:8px;margin:16px 0
-}
-.proc{
-  min-width:0;border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff;
-  cursor:pointer;overflow:hidden
-}
-.proc.active{outline:3px solid #d8d1ff;background:#faf9ff}
-.proc.done{background:#f4fbf8}
+.process{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:16px 0}
+.proc{min-width:0;border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff;cursor:pointer;overflow:hidden}
+.proc.active{outline:3px solid #d8d1ff;background:#faf9ff}.proc.done{background:#f4fbf8}
 .proc .num{display:inline-grid;place-items:center;width:27px;height:27px;border-radius:50%;background:var(--purple);color:#fff;font-weight:900;margin-bottom:6px}
 .proc b{display:block;margin-bottom:4px}
 
 .guidegrid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:16px;align-items:start}
 .matrixWrap{display:flex;justify-content:center}
-.matrix{
-  display:grid;gap:2px;background:#dbe3ec;padding:2px;border-radius:12px;
-  width:min(100%,460px);aspect-ratio:1;position:relative
-}
-.px{
-  border:0;border-radius:0;padding:0;min-width:0;position:relative;
-  display:grid;place-items:center;font-size:10px;color:#10253f
-}
-.px.hi{outline:3px solid #7048b5;z-index:3}
-.px.target{outline:3px solid #16885a;z-index:4}
-.formula{
-  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-  background:#f8fafc;border:1px solid var(--line);border-radius:12px;
-  padding:11px;white-space:pre-wrap;line-height:1.5;overflow:auto
-}
+.matrix{display:grid;gap:2px;background:#dbe3ec;padding:2px;border-radius:12px;width:min(100%,460px);aspect-ratio:1;position:relative}
+.px{border:0;border-radius:0;padding:0;min-width:0;position:relative;display:grid;place-items:center;font-size:10px;color:#10253f}
+.px.hi{outline:3px solid #7048b5;z-index:3}.px.target{outline:3px solid #16885a;z-index:4}
+.formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:11px;white-space:pre-wrap;line-height:1.5;overflow:auto}
 .guideControls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.guideControls button{flex:1;min-width:120px}
-.guideControls .primary{background:var(--purple);color:#fff;border-color:var(--purple)}
-.whatbox{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px
-}
-.what{
-  min-width:0;border:1px solid var(--line);border-radius:14px;padding:11px;background:#fbfcfe
-}
-.what b{display:block;margin-bottom:4px}
+.guideControls button{flex:1;min-width:120px}.guideControls .primary{background:var(--purple);color:#fff;border-color:var(--purple)}
+.whatbox{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.what{min-width:0;border:1px solid var(--line);border-radius:14px;padding:11px;background:#fbfcfe}.what b{display:block;margin-bottom:4px}
 .bigidea{background:#eef9f5;border:1px solid #bfe5d7;border-radius:16px;padding:14px;margin-top:12px;line-height:1.5}
 
-.chain{
-  display:grid;grid-template-columns:repeat(9,minmax(0,auto));
-  align-items:center;justify-content:center;gap:6px;margin:18px 0
-}
-.chainNode{
-  min-width:95px;text-align:center;border:1px solid var(--line);border-radius:14px;
-  padding:10px;background:#fff
-}
-.chainArrow{font-size:1.5rem;color:var(--purple);font-weight:900}
-.chainNode.active{outline:3px solid #d8d1ff;background:#faf9ff}
+.chain{display:grid;grid-template-columns:repeat(9,minmax(0,auto));align-items:center;justify-content:center;gap:6px;margin:18px 0}
+.chainNode{min-width:95px;text-align:center;border:1px solid var(--line);border-radius:14px;padding:10px;background:#fff}
+.chainArrow{font-size:1.5rem;color:var(--purple);font-weight:900}.chainNode.active{outline:3px solid #d8d1ff;background:#faf9ff}
 
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
@@ -96,28 +65,69 @@ button:hover,button.active{border-color:var(--blue);background:var(--blue2)}
 .row{display:grid;grid-template-columns:110px minmax(0,1fr) 70px;gap:12px;align-items:center;margin:12px 0}
 .row label{font-weight:800}.row output{text-align:right;font-variant-numeric:tabular-nums;font-weight:900}
 input[type=range]{width:100%;accent-color:var(--blue)}
-.metric{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff}
-.metric b{display:block;font-size:1.5rem;margin-top:5px}
+.metric{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff}.metric b{display:block;font-size:1.5rem;margin-top:5px}
+
+/* Full CNN tab */
+.fullFlow{display:grid;grid-template-columns:repeat(13,minmax(0,auto));align-items:center;justify-content:center;gap:5px;margin:16px 0}
+.fullNode{min-width:85px;text-align:center;border:1px solid var(--line);border-radius:13px;padding:9px 7px;background:#fff;font-size:.88rem}
+.fullArrow{font-size:1.25rem;color:var(--purple);font-weight:900}
+.fullNode strong{display:block}
+.fullIntro{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:16px;align-items:start}
+.inputChoices{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.stage{border-left:5px solid var(--blue);padding-left:16px;margin:24px 0 12px}
+.stage.orangeBorder{border-color:var(--orange)}.stage.purpleBorder{border-color:var(--purple)}.stage.greenBorder{border-color:var(--green)}
+.stage.redBorder{border-color:var(--red)}
+.miniMaps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.mapCard{min-width:0;border:1px solid var(--line);border-radius:16px;padding:12px;background:#fbfcfe}
+.mapCard h3{font-size:1rem}
+.miniMatrix{display:grid;gap:1px;background:#dbe3ec;padding:1px;border-radius:9px;aspect-ratio:1;width:100%;max-width:230px;margin:auto}
+.miniPx{min-width:0;border:0;border-radius:0;padding:0}
+.filterGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.filterCard{min-width:0;border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff}
+.filterMatrix{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;width:min(150px,100%);aspect-ratio:1;margin:10px auto;background:#dbe3ec;padding:2px;border-radius:9px}
+.filterCell{display:grid;place-items:center;background:#f8fafc;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:800;font-size:.82rem}
+.paddingDemo{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:16px;align-items:center}
+.paddingBox{display:flex;justify-content:center}
+.paddedMatrix{display:grid;gap:1px;background:#dbe3ec;padding:1px;border-radius:10px;width:min(100%,330px);aspect-ratio:1}
+.padPx{min-width:0;border:0;padding:0}.padPx.pad{background:#eef2f7!important;outline:1px dashed #aab7c6;outline-offset:-1px}
+.hierarchy{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center}
+.hierMaps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.hierArrow{font-size:2.1rem;color:var(--purple);font-weight:900}
+.poolCompare{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center}
+.flattenBox{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:12px;overflow:auto;white-space:nowrap}
+.softmaxGrid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:16px;align-items:start}
+.logits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.logit{border:1px solid var(--line);border-radius:13px;padding:10px;text-align:center;background:#fbfcfe}.logit b{display:block;font-size:1.2rem}
+.barrow{display:grid;grid-template-columns:42px minmax(0,1fr) 62px;gap:9px;align-items:center;margin:9px 0}
+.track{height:22px;border-radius:8px;background:#eef2f7;overflow:hidden}.fill{height:100%;background:var(--blue)}
+.softWinner{background:var(--green2);border:1px solid #bfe5d7;border-radius:15px;padding:13px;margin-top:12px}
+.sizeBadge{display:inline-block;border-radius:999px;background:#f2edff;color:var(--purple);padding:4px 8px;font-size:.78rem;font-weight:900}
 .footer{font-size:.85rem;color:var(--muted);padding:6px 2px 30px}
 
+@media(max-width:1000px){
+  .fullFlow{grid-template-columns:repeat(7,minmax(0,auto))}
+  .fullFlow .breakArrow{display:none}
+}
 @media(max-width:950px){
   .process{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .guidegrid,.grid2,.grid3{grid-template-columns:1fr}
+  .guidegrid,.grid2,.grid3,.fullIntro,.paddingDemo,.softmaxGrid{grid-template-columns:1fr}
   .whatbox{grid-template-columns:1fr}
-  .chain{grid-template-columns:1fr}
-  .chainArrow{text-align:center;transform:rotate(90deg)}
+  .chain{grid-template-columns:1fr}.chainArrow{text-align:center;transform:rotate(90deg)}
+  .hierarchy,.poolCompare{grid-template-columns:1fr}.hierArrow{text-align:center;transform:rotate(90deg)}
+  .miniMaps,.filterGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:700px){
+  .fullFlow{grid-template-columns:1fr}
+  .fullArrow{text-align:center;transform:rotate(90deg)}
 }
 @media(max-width:620px){
-  .wrap{padding:20px 12px 40px}
-  .hero,.card{padding:16px;border-radius:18px}
-  .process{grid-template-columns:1fr 1fr}
-  .modebar{display:grid;grid-template-columns:1fr}
-  .modebtn{width:100%}
+  .wrap{padding:20px 12px 40px}.hero,.card{padding:16px;border-radius:18px}
+  .process{grid-template-columns:1fr 1fr}.modebar{display:grid;grid-template-columns:1fr}.modebtn{width:100%}
   .row{grid-template-columns:95px minmax(0,1fr) 55px;gap:8px}
+  .miniMaps,.filterGrid,.hierMaps,.logits{grid-template-columns:1fr}
 }
 @media(max-width:460px){
-  .process{grid-template-columns:1fr}
-  .row{grid-template-columns:1fr}.row output{text-align:left}
+  .process{grid-template-columns:1fr}.row{grid-template-columns:1fr}.row output{text-align:left}
   .guideControls{display:grid;grid-template-columns:1fr}
 }
 </style>
@@ -154,12 +164,12 @@ input[type=range]{width:100%;accent-color:var(--blue)}
   <div class="modebar">
     <button class="modebtn active" id="guidedBtn">🟢 Modu gidatua</button>
     <button class="modebtn" id="advancedBtn">🔬 Modu aurreratua</button>
+    <button class="modebtn" id="fullBtn">🎬 CNN osoa · iruditik Softmax-era</button>
   </div>
 </section>
 
 <!-- GUIDED MODE -->
 <section id="guidedMode">
-
   <div class="process">
     <div class="proc active" data-step="1"><div class="num">1</div><b>Irudia</b><span class="small">Sarrera: pixelak.</span></div>
     <div class="proc" data-step="2"><div class="num">2</div><b>Konboluzioa</b><span class="small">Kernelak patroi bat bilatzen du.</span></div>
@@ -182,13 +192,11 @@ input[type=range]{width:100%;accent-color:var(--blue)}
     <section class="card">
       <h2>Zer gertatzen ari da?</h2>
       <div id="gText"></div>
-
       <div class="whatbox">
         <div class="what"><b>SARRERA</b><span id="gIn">—</span></div>
         <div class="what"><b>ERAGIKETA</b><span id="gOp">—</span></div>
         <div class="what"><b>IRTEERA</b><span id="gOut">—</span></div>
       </div>
-
       <div class="formula" id="gFormula"></div>
       <div class="bigidea" id="gIdea"></div>
     </section>
@@ -196,10 +204,7 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 
   <section class="card">
     <h2>▶ Konboluzioa benetan nola eraikitzen da?</h2>
-    <p>
-      Kernel 3×3-k irudiaren 3×3 eremu bat hartzen du, biderketak egin eta dena batzen du.
-      <strong>Emaitza bakar hori feature map-eko gelaxka batean</strong> idazten da.
-    </p>
+    <p>Kernel 3×3-k irudiaren 3×3 eremu bat hartzen du, biderketak egin eta dena batzen du. <strong>Emaitza bakar hori feature map-eko gelaxka batean</strong> idazten da.</p>
     <div class="guideControls">
       <button id="scanPrev">← Aurreko posizioa</button>
       <button class="primary" id="scanNext">Hurrengo posizioa →</button>
@@ -212,18 +217,9 @@ input[type=range]{width:100%;accent-color:var(--blue)}
   <section class="card">
     <h2>🧠 Hiru kontzeptuak esaldi bakarrean</h2>
     <div class="grid3">
-      <div class="callout blue">
-        <strong>FEATURE MAP</strong><br>
-        “Kernelak bilatzen duen patroia <strong>non eta zenbat</strong> agertu den erakusten duen mapa.”
-      </div>
-      <div class="callout purple">
-        <strong>ReLU</strong><br>
-        “Erantzun negatiboak 0 bihurtzen ditu eta seinale positiboak uzten ditu.”
-      </div>
-      <div class="callout green">
-        <strong>MAXPOOL</strong><br>
-        “Auzo bakoitzean aktibazio handiena gordetzen du, mapa txikiago eta trinkoago bihurtuz.”
-      </div>
+      <div class="callout blue"><strong>FEATURE MAP</strong><br>“Kernelak bilatzen duen patroia <strong>non eta zenbat</strong> agertu den erakusten duen mapa.”</div>
+      <div class="callout purple"><strong>ReLU</strong><br>“Erantzun negatiboak 0 bihurtzen ditu eta seinale positiboak uzten ditu.”</div>
+      <div class="callout green"><strong>MAXPOOL</strong><br>“Auzo bakoitzean aktibazio handiena gordetzen du, mapa txikiago eta trinkoago bihurtuz.”</div>
     </div>
   </section>
 
@@ -237,7 +233,6 @@ input[type=range]{width:100%;accent-color:var(--blue)}
       <strong>5.</strong> MaxPool-ek informazio indartsuena laburbiltzen du.
     </div>
   </section>
-
 </section>
 
 <!-- ADVANCED MODE -->
@@ -254,10 +249,7 @@ input[type=range]{width:100%;accent-color:var(--blue)}
   </section>
 
   <div class="grid2">
-    <section class="card">
-      <h2>1 · Sarrera 8×8</h2>
-      <div class="matrixWrap"><div id="input" class="matrix"></div></div>
-    </section>
+    <section class="card"><h2>1 · Sarrera 8×8</h2><div class="matrixWrap"><div id="input" class="matrix"></div></div></section>
     <section class="card">
       <h2>2 · Kernel 3×3</h2>
       <div class="controls" id="kernels">
@@ -272,20 +264,9 @@ input[type=range]{width:100%;accent-color:var(--blue)}
   </div>
 
   <div class="grid3">
-    <section class="card">
-      <h2>3 · Feature map 6×6</h2>
-      <div class="matrixWrap"><div id="conv" class="matrix"></div></div>
-    </section>
-    <section class="card">
-      <h2>4 · ReLU</h2>
-      <div class="matrixWrap"><div id="relu" class="matrix"></div></div>
-      <p class="small">Balio negatiboak → 0.</p>
-    </section>
-    <section class="card">
-      <h2>5 · MaxPool 2×2</h2>
-      <div class="matrixWrap"><div id="pool" class="matrix"></div></div>
-      <p class="small">6×6 → 3×3; bloke bakoitzeko maximoa.</p>
-    </section>
+    <section class="card"><h2>3 · Feature map 6×6</h2><div class="matrixWrap"><div id="conv" class="matrix"></div></div></section>
+    <section class="card"><h2>4 · ReLU</h2><div class="matrixWrap"><div id="relu" class="matrix"></div></div><p class="small">Balio negatiboak → 0.</p></section>
+    <section class="card"><h2>5 · MaxPool 2×2</h2><div class="matrixWrap"><div id="pool" class="matrix"></div></div><p class="small">6×6 → 3×3; bloke bakoitzeko maximoa.</p></section>
   </div>
 
   <section class="card">
@@ -301,6 +282,159 @@ input[type=range]{width:100%;accent-color:var(--blue)}
   </section>
 </section>
 
+<!-- FULL CNN MODE -->
+<section id="fullMode" class="hidden">
+
+  <section class="card">
+    <span class="pill">CNN OSOA · SIMULAZIO DIDAKTIKOA</span>
+    <h2>🎬 Iruditik klase-probabilitatera</h2>
+    <p>
+      Hemen ez dugu urrats bakoitza isolatuta aztertuko. <strong>Irudi berak CNN osoa zeharkatuko du</strong>,
+      eta geruza bakoitzean zer forma hartzen duen ikusiko dugu.
+    </p>
+    <div class="fullFlow">
+      <div class="fullNode"><strong>12×12</strong>Irudia</div><div class="fullArrow">→</div>
+      <div class="fullNode"><strong>Conv1 + ReLU</strong>3 feature map</div><div class="fullArrow">→</div>
+      <div class="fullNode"><strong>Conv2 + ReLU</strong>2 map hierarkiko</div><div class="fullArrow">→</div>
+      <div class="fullNode"><strong>MaxPool</strong>2 × 6×6</div><div class="fullArrow">→</div>
+      <div class="fullNode"><strong>Flatten</strong>72 balio</div><div class="fullArrow">→</div>
+      <div class="fullNode"><strong>Dense</strong>4 logits</div><div class="fullArrow">→</div>
+      <div class="fullNode"><strong>Softmax</strong>4 probabilitate</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="fullIntro">
+      <div>
+        <h2>1 · Input irudia</h2>
+        <p class="small">Aukeratu irudi sinple bat. Adibidea MNIST estilokoa da, pipeline osoa argi ikusteko.</p>
+        <div class="inputChoices">
+          <button data-full-img="0">0</button>
+          <button data-full-img="1">1</button>
+          <button data-full-img="7" class="active">7</button>
+          <button data-full-img="8">8</button>
+        </div>
+        <div class="matrixWrap"><div id="fullInput" class="matrix" style="max-width:330px"></div></div>
+      </div>
+      <div>
+        <h2>Padding-a: zergatik?</h2>
+        <div class="callout blue">
+          <strong>Padding = 1 · “same”</strong><br>
+          3×3 kernel bat erabiltzean, irudiaren inguruan 0-ko ertza gehitzen dugu.
+          Horrela konboluzioaren ondoren tamaina mantentzen dugu:
+          <strong>12×12 → 12×12</strong>.
+        </div>
+        <div class="paddingBox"><div id="paddedInput" class="paddedMatrix"></div></div>
+        <p class="small">Ertz gris marraduna = padding-eko zeroak. Ez dira jatorrizko irudiaren pixelak.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="stage orangeBorder">
+      <h2>2 · Conv1: hainbat filtro → hainbat feature map</h2>
+      <p>Filtro bakoitzak <strong>patroi desberdin bat</strong> bilatzen du. CNN batek ez du feature map bakarra sortzen: filtro bakoitzak bere mapa sortzen du.</p>
+    </div>
+    <div class="filterGrid" id="filterCards"></div>
+    <div class="callout orange">
+      <strong>Padding = 1 + stride = 1:</strong> hiru filtroek 12×12-ko hiru feature map sortzen dituzte.
+      Ondoren ReLU aplikatzen dugu, erantzun negatiboak 0 bihurtzeko.
+    </div>
+    <div class="miniMaps" id="conv1Maps"></div>
+  </section>
+
+  <section class="card">
+    <div class="stage purpleBorder">
+      <h2>3 · Feature hierarchy: bigarren geruzak lehen mapak konbinatzen ditu</h2>
+      <p>
+        Lehen geruzak ertzak bezalako patroi sinpleak aurkitu ditu. Bigarren geruzak ez du jatorrizko irudia zuzenean begiratzen:
+        <strong>aurreko feature map-ak konbinatzen ditu</strong> forma konplexuagoak eraikitzeko.
+      </p>
+    </div>
+    <div class="hierarchy">
+      <div>
+        <span class="sizeBadge">LAYER 1 · 3 × 12×12</span>
+        <div class="miniMaps" id="hierInputMaps"></div>
+      </div>
+      <div class="hierArrow">→</div>
+      <div>
+        <span class="sizeBadge">LAYER 2 · 2 × 12×12</span>
+        <div class="hierMaps" id="conv2Maps"></div>
+      </div>
+    </div>
+    <div class="callout purple">
+      <strong>Hierarkia:</strong> pixelak → ertzak → ertzen konbinazioak / formak.
+      Horixe da Deep Learning-en ideia nagusietako bat.
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="stage greenBorder">
+      <h2>4 · MaxPool: feature map-ak konprimitu</h2>
+      <p>2×2 bloke bakoitzean aktibazio handiena gordetzen dugu. Ez dugu klasea erabaki oraindik: <strong>irudikapena trinkotzen</strong> ari gara.</p>
+    </div>
+    <div class="poolCompare">
+      <div>
+        <span class="sizeBadge">AURRETIK · 2 × 12×12</span>
+        <div class="hierMaps" id="prePoolMaps"></div>
+      </div>
+      <div class="hierArrow">→</div>
+      <div>
+        <span class="sizeBadge">MAXPOOL 2×2 · 2 × 6×6</span>
+        <div class="hierMaps" id="poolMaps"></div>
+      </div>
+    </div>
+    <div class="callout green">
+      288 aktibazioetatik <strong>72 aktibaziotara</strong>: 2×12×12 → 2×6×6.
+      Seinale indartsuenak mantentzen dira eta konputazioa murrizten da.
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="stage redBorder">
+      <h2>5 · Flatten + Dense: feature-etatik logits-era</h2>
+      <p>
+        Orain feature map espazialak bektore batean jartzen ditugu.
+        Dense geruzak feature horiek konbinatzen ditu eta klase bakoitzerako <strong>logit</strong> bat sortzen du.
+      </p>
+    </div>
+    <div class="flattenBox" id="flattenPreview"></div>
+    <div class="callout blue">
+      <strong>Flatten:</strong> 2 × 6 × 6 = <strong>72 balio</strong> → bektore bakarra.
+      Kontuan izan: hemen irudia jada ez da pixel gordinen irudia; CNNak ateratako feature-ak dira.
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="stage">
+      <h2>6 · Softmax: logits → probabilitate banaketa</h2>
+      <p>Softmax-ek 4 logit-ak elkarren artean konparatu eta probabilitate bihurtzen ditu. Probabilitate guztiek <strong>1</strong> batzen dute.</p>
+    </div>
+    <div class="softmaxGrid">
+      <div>
+        <h3>Dense-ren irteera: logits</h3>
+        <div class="logits" id="logits"></div>
+        <div class="formula">Softmax(zᵢ) = eᶻⁱ / Σ eᶻʲ</div>
+      </div>
+      <div>
+        <h3>Softmax probabilitateak</h3>
+        <div id="softmaxBars"></div>
+        <div class="softWinner" id="softWinner"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>🧠 Istorio osoa esaldi batean</h2>
+    <div class="callout green">
+      <strong>Irudia</strong> → filtroek patroi lokalak aurkitzen dituzte →
+      <strong>feature map-ak</strong> sortzen dira → geruza sakonagoek feature horiek konbinatzen dituzte →
+      <strong>pooling</strong>-ek irudikapena trinkotzen du → Dense-k klase bakoitzeko score bat sortzen du →
+      <strong>Softmax</strong>-ek score horiek probabilitate bihurtzen ditu.
+    </div>
+  </section>
+</section>
+
 <div class="footer">5072 ML Lab · Demo didaktikoa · Helburua CNN prozesua ulertzea da.</div>
 </div>
 
@@ -310,6 +444,7 @@ const $=s=>document.querySelector(s);
 const K={
   vert:[[1,0,-1],[1,0,-1],[1,0,-1]],
   hor:[[1,1,1],[0,0,0],[-1,-1,-1]],
+  diag:[[-1,-1,0],[-1,0,1],[0,1,1]],
   blur:[[1/9,1/9,1/9],[1/9,1/9,1/9],[1/9,1/9,1/9]],
   sharp:[[0,-1,0],[-1,5,-1],[0,-1,0]]
 };
@@ -333,6 +468,18 @@ function conv2(a,k){
   }
   return o
 }
+function convSame(a,k){
+  const rows=a.length,cols=a[0].length,o=Array.from({length:rows},()=>Array(cols).fill(0));
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    let s=0;
+    for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){
+      const rr=r+i,cc=c+j,v=(rr>=0&&rr<rows&&cc>=0&&cc<cols)?a[rr][cc]:0;
+      s+=v*k[i+1][j+1];
+    }
+    o[r][c]=s;
+  }
+  return o
+}
 function relu2(a){return a.map(row=>row.map(v=>Math.max(0,v)))}
 function pool(a){
   let o=[];
@@ -347,192 +494,239 @@ function pool(a){
 }
 function renderMatrix(el,a,opts={}){
   const rows=a.length,cols=a[0].length,flat=a.flat(),mn=Math.min(...flat),mx=Math.max(...flat);
-  el.style.gridTemplateColumns=`repeat(${cols},1fr)`;
-  el.style.aspectRatio=`${cols}/${rows}`;
-  el.innerHTML='';
-  a.forEach((row,r)=>row.forEach((v,c)=>{
-    let b=document.createElement('button');
-    b.className='px';
-    let t=mx===mn?.5:(v-mn)/(mx-mn);
-    let rr=Math.round(245-170*t),gg=Math.round(248-100*t),bb=Math.round(252-30*t);
-    b.style.background=`rgb(${rr},${gg},${bb})`;
-    b.title=`${v.toFixed(2)}`;
-    if(opts.showNumbers && rows<=6) b.textContent=Number(v.toFixed(1));
-    if(opts.patch && r>=opts.patch.r && r<opts.patch.r+3 && c>=opts.patch.c && c<opts.patch.c+3) b.classList.add('hi');
-    if(opts.target && r===opts.target.r && c===opts.target.c) b.classList.add('target');
-    if(opts.clickable) b.onclick=()=>{opts.clickable(r,c)};
-    el.appendChild(b);
-  }))
-}
-
-/* Guided mode */
-const gInput=clone(presets.edge);
-const gKernel=K.vert;
-const gConv=conv2(gInput,gKernel);
-const gRelu=relu2(gConv);
-const gPool=pool(gRelu);
-let gStep=1,scanPos=0,autoTimer=null;
-
-const stepCopy={
-  1:{
-    pill:'1 · IRUDIA',title:'Sarrera: pixel-matrizea',
-    in:'8×8 pixel-matrizea',op:'Oraindik ez dago transformaziorik',out:'Irudi bera',
-    text:`<p>Hau da CNNaren <strong>sarrera</strong>. Zenbaki bakoitza pixel baten intentsitatea da.</p>
-          <p>Oraindik ez dago feature map-ik, ReLU-rik edo pooling-ik. Irudi gordina baino ez dugu.</p>`,
-    formula:'Sarrera = 8 × 8 pixel',
-    idea:'<strong>Gakoa:</strong> prozesu osoa matrize honetatik hasten da.'
-  },
-  2:{
-    pill:'2 · KONBOLUZIOA',title:'Kernelak patroi bat bilatzen du',
-    in:'8×8 irudia + 3×3 kernel',op:'Biderkatu + batu',out:'Posizio bakoitzeko puntuazio bat',
-    text:`<p>Kernel 3×3-a irudiaren gainean mugitzen da. Posizio bakoitzean 3×3 zatia hartu,
-          kernelarekin <strong>elementuz elementu biderkatu</strong> eta emaitza guztiak batzen ditu.</p>
-          <p>Puntuazio horrek esaten du kernelak bilatzen duen patroia zenbateraino dagoen posizio horretan.</p>`,
-    formula:'3×3 patch × 3×3 kernel → biderkatu → batu → 1 balio',
-    idea:'<strong>Gakoa:</strong> konboluzioa da feature map-a sortzen duen eragiketa.'
-  },
-  3:{
-    pill:'3 · FEATURE MAP',title:'Feature map = detekzio-indarren mapa',
-    in:'Konboluzioaren emaitza guztiak',op:'Posizio bakoitzeko balioa mapan kokatu',out:'6×6 feature map',
-    text:`<p>Kernelak irudi osoan egindako neurketa guztiak 6×6 matrize batean antolatzen dira.</p>
-          <p>Horixe da <strong>feature map</strong>: kernelak bilatzen duen patroia <strong>non eta zenbat</strong> detektatu duen mapa.</p>`,
-    formula:'8×8 irudia + kernel 3×3 + stride 1 → 6×6 feature map',
-    idea:'<strong>Ez da “beste irudi bat” besterik gabe:</strong> patroi jakin baten detekzio-mapa da.'
-  },
-  4:{
-    pill:'4 · ReLU',title:'Aktibazioa: balio negatiboak 0 bihurtu',
-    in:'6×6 feature map',op:'ReLU(x) = max(0, x)',out:'6×6 aktibazio-mapa',
-    text:`<p>Feature map-ean balio positiboak eta negatiboak egon daitezke. ReLU-k balio negatibo guztiak
-          <strong>0</strong> bihurtzen ditu eta positiboak mantentzen ditu.</p>
-          <p>Gainera, sareari <strong>ez-linealtasuna</strong> gehitzen dio.</p>`,
-    formula:'ReLU(x) = max(0, x)\n-3 → 0\n 0 → 0\n+3 → 3',
-    idea:'<strong>Gakoa:</strong> ReLU ez da beste feature bat bilatzen; aurreko feature map-aren balioak eraldatzen ditu.'
-  },
-  5:{
-    pill:'5 · MAXPOOL',title:'MaxPool: mapa txikiagoa, seinale indartsua gordeta',
-    in:'6×6 ReLU mapa',op:'2×2 bloke bakoitzeko maximoa hartu',out:'3×3 mapa trinkoa',
-    text:`<p>MaxPool 2×2-k lau balioko bloke bakoitza begiratzen du eta <strong>handiena</strong> gordetzen du.</p>
-          <p>Horrela 6×6 mapa 3×3 bihurtzen da: informazioa trinkotu egiten da, eta aktibazio indartsuenak mantentzen dira.</p>`,
-    formula:'2×2 bloke bat\n[0, 1]\n[2, 3]\n→ max = 3',
-    idea:'<strong>Gakoa:</strong> MaxPool-ek ez du patroi berria ikasten; dagoen aktibazio-mapa laburtzen du.'
-  }
-};
-
-function updateChain(){
-  document.querySelectorAll('[data-chain]').forEach(x=>{
-    const n=+x.dataset.chain;
-    x.classList.toggle('active',n===gStep);
-  });
-}
-function updateSteps(){
-  document.querySelectorAll('.proc').forEach(x=>{
-    const n=+x.dataset.step;
-    x.classList.toggle('active',n===gStep);
-    x.classList.toggle('done',n<gStep);
-  });
-}
-function currentMatrix(){
-  if(gStep===1 || gStep===2) return gInput;
-  if(gStep===3) return gConv;
-  if(gStep===4) return gRelu;
-  return gPool;
-}
-function renderGuided(){
-  const copy=stepCopy[gStep],m=currentMatrix();
-  $('#gPill').textContent=copy.pill;$('#gTitle').textContent=copy.title;
-  $('#gText').innerHTML=copy.text;$('#gIn').textContent=copy.in;$('#gOp').textContent=copy.op;$('#gOut').textContent=copy.out;
-  $('#gFormula').textContent=copy.formula;$('#gIdea').innerHTML=copy.idea;
-  renderMatrix($('#gMatrix'),m,{showNumbers:gStep>=3});
-  updateChain();updateSteps();
-}
-document.querySelectorAll('.proc').forEach(x=>x.onclick=()=>{gStep=+x.dataset.step;renderGuided()});
-$('#prevBtn').onclick=()=>{gStep=Math.max(1,gStep-1);renderGuided()};
-$('#nextBtn').onclick=()=>{gStep=Math.min(5,gStep+1);renderGuided()};
-
-/* convolution scan */
-const scanPositions=[];
-for(let r=0;r<6;r++)for(let c=0;c<6;c++)scanPositions.push({r,c});
-function scanRender(){
-  const p=scanPositions[scanPos],val=gConv[p.r][p.c];
-  if(gStep!==2){gStep=2;renderGuided()}
-  renderMatrix($('#gMatrix'),gInput,{patch:p});
-  const patch=[];
-  for(let i=0;i<3;i++)patch.push(gInput[p.r+i].slice(p.c,p.c+3));
-  const terms=[];
-  let sum=0;
-  for(let i=0;i<3;i++)for(let j=0;j<3;j++){
-    const prod=patch[i][j]*gKernel[i][j];terms.push(`${patch[i][j]}×${gKernel[i][j]}`);sum+=prod;
-  }
-  $('#scanInfo').innerHTML=
-    `<strong>Posizioa:</strong> (${p.r+1}, ${p.c+1}) · `+
-    `<strong>3×3 patch × kernel → ${sum.toFixed(1)}</strong><br>`+
-    `Balio hau feature map-eko (${p.r+1}, ${p.c+1}) gelaxkan idazten da. `+
-    `(${scanPos+1}/36 posizio)`;
-}
-$('#scanPrev').onclick=()=>{scanPos=Math.max(0,scanPos-1);scanRender()};
-$('#scanNext').onclick=()=>{scanPos=Math.min(scanPositions.length-1,scanPos+1);scanRender()};
-$('#scanReset').onclick=()=>{scanPos=0;scanRender()};
-$('#scanAuto').onclick=()=>{
-  if(autoTimer){clearInterval(autoTimer);autoTimer=null;$('#scanAuto').textContent='▶ Automatikoki';return}
-  $('#scanAuto').textContent='⏸ Gelditu';
-  autoTimer=setInterval(()=>{
-    if(scanPos>=scanPositions.length-1){
-      clearInterval(autoTimer);autoTimer=null;$('#scanAuto').textContent='▶ Automatikoki';
-      gStep=3;renderGuided();
-      $('#scanInfo').innerHTML='<strong>Konboluzioa amaitu da:</strong> 36 posizioetako emaitzek 6×6 feature map osoa osatzen dute.';
-      return;
-    }
-    scanPos++;scanRender();
-  },180);
-};
-
-/* Advanced mode = original functionality */
-let img=clone(presets.edge),kernel='vert';
-function renderAdv(id,a,clickable=false){
-  let el=$(id),rows=a.length,cols=a[0].length,flat=a.flat(),mn=Math.min(...flat),mx=Math.max(...flat);
   el.style.gridTemplateColumns=`repeat(${cols},1fr)`;el.style.aspectRatio=`${cols}/${rows}`;el.innerHTML='';
   a.forEach((row,r)=>row.forEach((v,c)=>{
     let b=document.createElement('button');b.className='px';
     let t=mx===mn?.5:(v-mn)/(mx-mn);
     b.style.background=`rgb(${Math.round(245-170*t)},${Math.round(248-100*t)},${Math.round(252-30*t)})`;
     b.title=`${v.toFixed(2)}`;
-    if(clickable)b.onclick=()=>{img[r][c]=(img[r][c]+.25)%1.25;updateAdv()};
-    el.appendChild(b)
+    if(opts.showNumbers && rows<=6)b.textContent=Number(v.toFixed(1));
+    if(opts.patch&&r>=opts.patch.r&&r<opts.patch.r+3&&c>=opts.patch.c&&c<opts.patch.c+3)b.classList.add('hi');
+    if(opts.target&&r===opts.target.r&&c===opts.target.c)b.classList.add('target');
+    if(opts.clickable)b.onclick=()=>opts.clickable(r,c);
+    el.appendChild(b);
   }))
 }
-function updateAdv(){
-  let c=conv2(img,K[kernel]),r=relu2(c),p=pool(r);
-  renderAdv('#input',img,true);renderAdv('#conv',c);renderAdv('#relu',r);renderAdv('#pool',p);
-  $('#kernelText').textContent=K[kernel].map(row=>row.map(v=>Number(v.toFixed(2))).join('   ')).join('  |  ')
+
+/* Guided mode */
+const gInput=clone(presets.edge),gKernel=K.vert,gConv=conv2(gInput,gKernel),gRelu=relu2(gConv),gPool=pool(gRelu);
+let gStep=1,scanPos=0,autoTimer=null;
+const stepCopy={
+  1:{pill:'1 · IRUDIA',title:'Sarrera: pixel-matrizea',in:'8×8 pixel-matrizea',op:'Oraindik ez dago transformaziorik',out:'Irudi bera',
+     text:`<p>Hau da CNNaren <strong>sarrera</strong>. Zenbaki bakoitza pixel baten intentsitatea da.</p><p>Oraindik ez dago feature map-ik, ReLU-rik edo pooling-ik. Irudi gordina baino ez dugu.</p>`,
+     formula:'Sarrera = 8 × 8 pixel',idea:'<strong>Gakoa:</strong> prozesu osoa matrize honetatik hasten da.'},
+  2:{pill:'2 · KONBOLUZIOA',title:'Kernelak patroi bat bilatzen du',in:'8×8 irudia + 3×3 kernel',op:'Biderkatu + batu',out:'Posizio bakoitzeko puntuazio bat',
+     text:`<p>Kernel 3×3-a irudiaren gainean mugitzen da. Posizio bakoitzean 3×3 zatia hartu, kernelarekin <strong>elementuz elementu biderkatu</strong> eta emaitza guztiak batzen ditu.</p><p>Puntuazio horrek esaten du kernelak bilatzen duen patroia zenbateraino dagoen posizio horretan.</p>`,
+     formula:'3×3 patch × 3×3 kernel → biderkatu → batu → 1 balio',idea:'<strong>Gakoa:</strong> konboluzioa da feature map-a sortzen duen eragiketa.'},
+  3:{pill:'3 · FEATURE MAP',title:'Feature map = detekzio-indarren mapa',in:'Konboluzioaren emaitza guztiak',op:'Posizio bakoitzeko balioa mapan kokatu',out:'6×6 feature map',
+     text:`<p>Kernelak irudi osoan egindako neurketa guztiak 6×6 matrize batean antolatzen dira.</p><p>Horixe da <strong>feature map</strong>: kernelak bilatzen duen patroia <strong>non eta zenbat</strong> detektatu duen mapa.</p>`,
+     formula:'8×8 irudia + kernel 3×3 + stride 1 → 6×6 feature map',idea:'<strong>Ez da “beste irudi bat” besterik gabe:</strong> patroi jakin baten detekzio-mapa da.'},
+  4:{pill:'4 · ReLU',title:'Aktibazioa: balio negatiboak 0 bihurtu',in:'6×6 feature map',op:'ReLU(x) = max(0, x)',out:'6×6 aktibazio-mapa',
+     text:`<p>Feature map-ean balio positiboak eta negatiboak egon daitezke. ReLU-k balio negatibo guztiak <strong>0</strong> bihurtzen ditu eta positiboak mantentzen ditu.</p><p>Gainera, sareari <strong>ez-linealtasuna</strong> gehitzen dio.</p>`,
+     formula:'ReLU(x) = max(0, x)\n-3 → 0\n 0 → 0\n+3 → 3',idea:'<strong>Gakoa:</strong> ReLU ez da beste feature bat bilatzen; aurreko feature map-aren balioak eraldatzen ditu.'},
+  5:{pill:'5 · MAXPOOL',title:'MaxPool: mapa txikiagoa, seinale indartsua gordeta',in:'6×6 ReLU mapa',op:'2×2 bloke bakoitzeko maximoa hartu',out:'3×3 mapa trinkoa',
+     text:`<p>MaxPool 2×2-k lau balioko bloke bakoitza begiratzen du eta <strong>handiena</strong> gordetzen du.</p><p>Horrela 6×6 mapa 3×3 bihurtzen da: informazioa trinkotu egiten da, eta aktibazio indartsuenak mantentzen dira.</p>`,
+     formula:'2×2 bloke bat\n[0, 1]\n[2, 3]\n→ max = 3',idea:'<strong>Gakoa:</strong> MaxPool-ek ez du patroi berria ikasten; dagoen aktibazio-mapa laburtzen du.'}
+};
+function updateChain(){document.querySelectorAll('[data-chain]').forEach(x=>x.classList.toggle('active',+x.dataset.chain===gStep))}
+function updateSteps(){document.querySelectorAll('.proc').forEach(x=>{const n=+x.dataset.step;x.classList.toggle('active',n===gStep);x.classList.toggle('done',n<gStep)})}
+function currentMatrix(){if(gStep===1||gStep===2)return gInput;if(gStep===3)return gConv;if(gStep===4)return gRelu;return gPool}
+function renderGuided(){
+  const copy=stepCopy[gStep],m=currentMatrix();
+  $('#gPill').textContent=copy.pill;$('#gTitle').textContent=copy.title;$('#gText').innerHTML=copy.text;
+  $('#gIn').textContent=copy.in;$('#gOp').textContent=copy.op;$('#gOut').textContent=copy.out;$('#gFormula').textContent=copy.formula;$('#gIdea').innerHTML=copy.idea;
+  renderMatrix($('#gMatrix'),m,{showNumbers:gStep>=3});updateChain();updateSteps()
 }
-document.querySelectorAll('[data-img]').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('[data-img]').forEach(x=>x.classList.remove('active'));b.classList.add('active');
-  img=clone(presets[b.dataset.img]);updateAdv()
-});
-document.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('[data-k]').forEach(x=>x.classList.remove('active'));b.classList.add('active');
-  kernel=b.dataset.k;updateAdv()
-});
+document.querySelectorAll('.proc').forEach(x=>x.onclick=()=>{gStep=+x.dataset.step;renderGuided()});
+$('#prevBtn').onclick=()=>{gStep=Math.max(1,gStep-1);renderGuided()};$('#nextBtn').onclick=()=>{gStep=Math.min(5,gStep+1);renderGuided()};
+
+const scanPositions=[];for(let r=0;r<6;r++)for(let c=0;c<6;c++)scanPositions.push({r,c});
+function scanRender(){
+  const p=scanPositions[scanPos];if(gStep!==2){gStep=2;renderGuided()}renderMatrix($('#gMatrix'),gInput,{patch:p});
+  let sum=0;for(let i=0;i<3;i++)for(let j=0;j<3;j++)sum+=gInput[p.r+i][p.c+j]*gKernel[i][j];
+  $('#scanInfo').innerHTML=`<strong>Posizioa:</strong> (${p.r+1}, ${p.c+1}) · <strong>3×3 patch × kernel → ${sum.toFixed(1)}</strong><br>Balio hau feature map-eko (${p.r+1}, ${p.c+1}) gelaxkan idazten da. (${scanPos+1}/36 posizio)`
+}
+$('#scanPrev').onclick=()=>{scanPos=Math.max(0,scanPos-1);scanRender()};$('#scanNext').onclick=()=>{scanPos=Math.min(scanPositions.length-1,scanPos+1);scanRender()};
+$('#scanReset').onclick=()=>{scanPos=0;scanRender()};
+$('#scanAuto').onclick=()=>{
+  if(autoTimer){clearInterval(autoTimer);autoTimer=null;$('#scanAuto').textContent='▶ Automatikoki';return}
+  $('#scanAuto').textContent='⏸ Gelditu';
+  autoTimer=setInterval(()=>{
+    if(scanPos>=scanPositions.length-1){clearInterval(autoTimer);autoTimer=null;$('#scanAuto').textContent='▶ Automatikoki';gStep=3;renderGuided();$('#scanInfo').innerHTML='<strong>Konboluzioa amaitu da:</strong> 36 posizioetako emaitzek 6×6 feature map osoa osatzen dute.';return}
+    scanPos++;scanRender()
+  },180)
+};
+
+/* Advanced mode */
+let img=clone(presets.edge),kernel='vert';
+function renderAdv(id,a,clickable=false){
+  let el=$(id),rows=a.length,cols=a[0].length,flat=a.flat(),mn=Math.min(...flat),mx=Math.max(...flat);
+  el.style.gridTemplateColumns=`repeat(${cols},1fr)`;el.style.aspectRatio=`${cols}/${rows}`;el.innerHTML='';
+  a.forEach((row,r)=>row.forEach((v,c)=>{
+    let b=document.createElement('button');b.className='px';let t=mx===mn?.5:(v-mn)/(mx-mn);
+    b.style.background=`rgb(${Math.round(245-170*t)},${Math.round(248-100*t)},${Math.round(252-30*t)})`;b.title=`${v.toFixed(2)}`;
+    if(clickable)b.onclick=()=>{img[r][c]=(img[r][c]+.25)%1.25;updateAdv()};el.appendChild(b)
+  }))
+}
+function updateAdv(){let c=conv2(img,K[kernel]),r=relu2(c),p=pool(r);renderAdv('#input',img,true);renderAdv('#conv',c);renderAdv('#relu',r);renderAdv('#pool',p);$('#kernelText').textContent=K[kernel].map(row=>row.map(v=>Number(v.toFixed(2))).join('   ')).join('  |  ')}
+document.querySelectorAll('[data-img]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-img]').forEach(x=>x.classList.remove('active'));b.classList.add('active');img=clone(presets[b.dataset.img]);updateAdv()});
+document.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-k]').forEach(x=>x.classList.remove('active'));b.classList.add('active');kernel=b.dataset.k;updateAdv()});
 $('#clear').onclick=()=>{img=Array.from({length:8},()=>Array(8).fill(0));updateAdv()};
-function params(){
-  let s=+$('#size').value,ch=+$('#channels').value,d=s*s*ch*64+64,c=3*3*ch*16+16;
-  $('#sv').textContent=`${s}×${s}`;$('#cv').textContent=ch;
-  $('#denseP').textContent=d.toLocaleString('eu-ES');$('#convP').textContent=c.toLocaleString('eu-ES');
-  $('#ratio').innerHTML=`Lehen geruzan Dense-k Conv2D-k baino <strong>${(d/c).toFixed(1)}×</strong> parametro gehiago ditu. Kernelaren pisuak posizio guztietan partekatzen dira.`
-}
+function params(){let s=+$('#size').value,ch=+$('#channels').value,d=s*s*ch*64+64,c=3*3*ch*16+16;$('#sv').textContent=`${s}×${s}`;$('#cv').textContent=ch;$('#denseP').textContent=d.toLocaleString('eu-ES');$('#convP').textContent=c.toLocaleString('eu-ES');$('#ratio').innerHTML=`Lehen geruzan Dense-k Conv2D-k baino <strong>${(d/c).toFixed(1)}×</strong> parametro gehiago ditu. Kernelaren pisuak posizio guztietan partekatzen dira.`}
 $('#size').oninput=params;$('#channels').oninput=params;
+
+/* Full CNN mode */
+function makeDigit(kind){
+  const n=12,a=Array.from({length:n},()=>Array(n).fill(0));
+  const set=(r,c,v=1)=>{if(r>=0&&r<n&&c>=0&&c<n)a[r][c]=Math.max(a[r][c],v)};
+  if(kind==='7'){
+    for(let c=2;c<=9;c++){set(1,c);set(2,c,.85)}
+    for(let r=2;r<=10;r++){let c=Math.round(9-(r-2)*.62);set(r,c);set(r,c-1,.65)}
+  }else if(kind==='1'){
+    for(let r=2;r<=10;r++){set(r,6);set(r,7,.75)}
+    set(2,5,.7);set(3,4,.55);for(let c=4;c<=8;c++)set(10,c,.8)
+  }else if(kind==='0'){
+    for(let c=3;c<=8;c++){set(1,c,.9);set(10,c,.9)}
+    for(let r=2;r<=9;r++){set(r,2,.9);set(r,9,.9)}
+    set(2,3,.7);set(2,8,.7);set(9,3,.7);set(9,8,.7)
+  }else{
+    for(let c=3;c<=8;c++){set(1,c,.9);set(5,c,.9);set(10,c,.9)}
+    for(let r=2;r<=4;r++){set(r,2,.8);set(r,9,.8)}
+    for(let r=6;r<=9;r++){set(r,2,.8);set(r,9,.8)}
+  }
+  return a
+}
+const fullLabels=['0','1','7','8'];
+const logitTemplates={
+  '0':[3.4,-0.7,0.0,0.7],
+  '1':[-0.4,3.1,0.5,-0.6],
+  '7':[0.0,-0.3,3.5,-0.5],
+  '8':[0.8,-0.7,-0.2,3.3]
+};
+let fullKind='7';
+
+function normPositive(a){
+  const mx=Math.max(...a.flat(),1e-9);
+  return a.map(row=>row.map(v=>Math.max(0,v)/mx))
+}
+function combineMaps(maps,weights){
+  const rows=maps[0].length,cols=maps[0][0].length;
+  let o=Array.from({length:rows},()=>Array(cols).fill(0));
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    let s=0;for(let k=0;k<maps.length;k++)s+=maps[k][r][c]*weights[k];
+    o[r][c]=Math.max(0,s)
+  }
+  return normPositive(o)
+}
+function renderMini(el,a){
+  el.innerHTML='';el.style.gridTemplateColumns=`repeat(${a[0].length},1fr)`;
+  const mx=Math.max(...a.flat(),1e-9);
+  a.forEach(row=>row.forEach(v=>{
+    const b=document.createElement('div');b.className='miniPx';
+    const t=Math.max(0,Math.min(1,v/mx));
+    b.style.background=`rgba(30,115,216,${.06+.88*t})`;el.appendChild(b)
+  }))
+}
+function renderPadded(el,a){
+  const n=a.length+2;el.innerHTML='';el.style.gridTemplateColumns=`repeat(${n},1fr)`;
+  for(let r=-1;r<=a.length;r++)for(let c=-1;c<=a[0].length;c++){
+    const b=document.createElement('div');b.className='padPx';
+    if(r<0||c<0||r>=a.length||c>=a[0].length){b.classList.add('pad')}
+    else{
+      const v=a[r][c];const z=Math.round(248-v*205);b.style.background=`rgb(${z},${Math.min(255,z+3)},${Math.min(255,z+8)})`
+    }
+    el.appendChild(b)
+  }
+}
+function addMapCard(container,title,a){
+  const card=document.createElement('div');card.className='mapCard';
+  card.innerHTML=`<h3>${title}</h3><div class="miniMatrix"></div>`;
+  container.appendChild(card);renderMini(card.querySelector('.miniMatrix'),a)
+}
+function renderFilterCards(){
+  const defs=[
+    ['Iragazki 1 · Bertikala',K.vert],
+    ['Iragazki 2 · Horizontala',K.hor],
+    ['Iragazki 3 · Diagonala',K.diag]
+  ];
+  const wrap=$('#filterCards');wrap.innerHTML='';
+  defs.forEach(([name,k])=>{
+    const card=document.createElement('div');card.className='filterCard';
+    const cells=k.flat().map(v=>`<div class="filterCell">${v}</div>`).join('');
+    card.innerHTML=`<h3>${name}</h3><div class="filterMatrix">${cells}</div><p class="small">3×3 kernel · pisu berak irudi osoan partekatzen dira.</p>`;
+    wrap.appendChild(card)
+  })
+}
+function softmax(z){
+  const m=Math.max(...z),e=z.map(v=>Math.exp(v-m)),s=e.reduce((a,b)=>a+b,0);return e.map(v=>v/s)
+}
+function renderFull(){
+  const input=makeDigit(fullKind);
+  renderMatrix($('#fullInput'),input);
+  renderPadded($('#paddedInput'),input);
+  renderFilterCards();
+
+  const f1=[
+    normPositive(relu2(convSame(input,K.vert))),
+    normPositive(relu2(convSame(input,K.hor))),
+    normPositive(relu2(convSame(input,K.diag)))
+  ];
+  const c1=$('#conv1Maps');c1.innerHTML='';
+  addMapCard(c1,'Bertikalak',f1[0]);addMapCard(c1,'Horizontalak',f1[1]);addMapCard(c1,'Diagonalak',f1[2]);
+
+  const hi=$('#hierInputMaps');hi.innerHTML='';
+  addMapCard(hi,'Ertzak V',f1[0]);addMapCard(hi,'Ertzak H',f1[1]);addMapCard(hi,'Diagonalak',f1[2]);
+
+  const f2=[
+    combineMaps(f1,[.55,.55,.20]),
+    combineMaps(f1,[.20,.45,.65])
+  ];
+  const c2=$('#conv2Maps');c2.innerHTML='';
+  addMapCard(c2,'Forma / izkinak',f2[0]);addMapCard(c2,'Egitura konbinatua',f2[1]);
+
+  const pp=$('#prePoolMaps');pp.innerHTML='';addMapCard(pp,'Map A · 12×12',f2[0]);addMapCard(pp,'Map B · 12×12',f2[1]);
+  const pooled=[pool(f2[0]),pool(f2[1])];
+  const pm=$('#poolMaps');pm.innerHTML='';addMapCard(pm,'Map A · 6×6',pooled[0]);addMapCard(pm,'Map B · 6×6',pooled[1]);
+
+  const flat=pooled.flatMap(m=>m.flat());
+  $('#flattenPreview').textContent='['+flat.slice(0,18).map(v=>v.toFixed(2)).join(', ')+', ... ]  →  72 balio';
+
+  const logits=logitTemplates[fullKind];
+  const probs=softmax(logits);
+  const lg=$('#logits');lg.innerHTML='';
+  fullLabels.forEach((label,i)=>{
+    const d=document.createElement('div');d.className='logit';d.innerHTML=`<span>${label}</span><b>${logits[i].toFixed(2)}</b>`;lg.appendChild(d)
+  });
+  const bars=$('#softmaxBars');bars.innerHTML='';
+  fullLabels.forEach((label,i)=>{
+    const pct=probs[i]*100;
+    const row=document.createElement('div');row.className='barrow';
+    row.innerHTML=`<b>${label}</b><div class="track"><div class="fill" style="width:${pct.toFixed(1)}%"></div></div><strong>${pct.toFixed(1)}%</strong>`;
+    bars.appendChild(row)
+  });
+  const best=probs.indexOf(Math.max(...probs));
+  $('#softWinner').innerHTML=`✅ <strong>Aurreikusitako klasea: ${fullLabels[best]}</strong><br>Softmax probabilitate handiena: ${(probs[best]*100).toFixed(1)}%. Probabilitate guztien batura = 100%.`
+}
+document.querySelectorAll('[data-full-img]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('[data-full-img]').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  fullKind=b.dataset.fullImg;renderFull()
+});
 
 /* mode switch */
 function setMode(m){
-  const guided=m==='guided';
-  $('#guidedMode').classList.toggle('hidden',!guided);$('#advancedMode').classList.toggle('hidden',guided);
-  $('#guidedBtn').classList.toggle('active',guided);$('#advancedBtn').classList.toggle('active',!guided);
-  if(guided)renderGuided();else updateAdv();
+  $('#guidedMode').classList.toggle('hidden',m!=='guided');
+  $('#advancedMode').classList.toggle('hidden',m!=='advanced');
+  $('#fullMode').classList.toggle('hidden',m!=='full');
+  $('#guidedBtn').classList.toggle('active',m==='guided');
+  $('#advancedBtn').classList.toggle('active',m==='advanced');
+  $('#fullBtn').classList.toggle('active',m==='full');
+  if(m==='guided')renderGuided();
+  if(m==='advanced')updateAdv();
+  if(m==='full')renderFull()
 }
-$('#guidedBtn').onclick=()=>setMode('guided');
-$('#advancedBtn').onclick=()=>setMode('advanced');
+$('#guidedBtn').onclick=()=>setMode('guided');$('#advancedBtn').onclick=()=>setMode('advanced');$('#fullBtn').onclick=()=>setMode('full');
 
-renderGuided();scanRender();updateAdv();params();
+renderGuided();scanRender();updateAdv();params();renderFull();
 </script>
 </body>
 </html>
